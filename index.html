@@ -1,0 +1,378 @@
+    if (urlPath === "/") urlPath = "/apps/index.html";
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f0f11;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #eaeef5;
+            letter-spacing: -0.3px;
+        }
+
+        .toolbar {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            background: #1a1d24;
+            border: 1px solid #2c303a;
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            color: #e2e8f0;
+            font-size: 0.85rem;
+            width: 260px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .search-box:focus {
+            border-color: #4a5b8c;
+        }
+
+        .counter {
+            font-size: 0.8rem;
+            color: #7a7f8f;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .game-card {
+            background: #1a1d24;
+            border: 1px solid #2a2e38;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            aspect-ratio: 4 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .game-card:hover {
+            background: #222630;
+            border-color: #3d455c;
+            transform: translateY(-2px);
+        }
+
+        .game-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: #cbd5e6;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 1rem;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .game-link:visited {
+            color: #9aa3b8;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+            background: #1a1d24;
+            border-radius: 12px;
+            border: 1px solid #2a2e38;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+            .game-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 0.75rem;
+            }
+            .game-link {
+                font-size: 0.75rem;
+                padding: 0.75rem;
+            }
+            .search-box {
+                width: 100%;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>games</h1>
+    </div>
+
+    <div class="toolbar">
+        <input type="text" id="searchInput" class="search-box" placeholder="find a game" autocomplete="off">
+        <div class="counter" id="counterDisplay">0 games</div>
+    </div>
+
+    <div id="gamesGrid" class="game-grid"></div>
+</div>
+
+<script>
+    const gameFiles = [
+        "-jetpack-joyride-.html", "10-minutes-till-dawn.html", "17bucks.html", "2048-merge-run.html",
+        "3d-bowling.html", "8-ball-billiards-classic.html", "8BallPool.html", "Bloons-Tower-Defense-4.html",
+        "BloonsTowerDefense2.html", "BurritoBison.html", "Fancy-Pants-Adventure-2.html", "HTML-Games-V2.html",
+        "Jtrigger.html", "Learn-To-Fly-3.html", "LineRider2.html", "MM.html", "Papa's-Cheeseria.html",
+        "Papa's-Cupcakeria.html", "Papa's-Hot-Doggeria.html", "Papa's-Scooperia.html", "Papa's-Sushiria.html",
+        "Papa's-Wingeria.html", "Papas-Pancakeria.html", "Papas-Pasteria.html", "React-Ruffle.html",
+        "Red-Ball---Definitive-Edition.html", "Red-Ball-2---Definitive-Edition.html", "Red-Ball-4-Vol.2---Definitive-Edition.html",
+        "Red-Ball-4-Vol.3---Definitive-Edition.html", "Riddle_School.html", "Riddle_School_2.html", "Riddle_School_3.html",
+        "Riddle_School_4.html", "Riddle_School_5.html", "Riddle_Transfer.html", "Run.html", "Run2.html",
+        "The-Worlds-Hardest-Game-3.html", "The-Worlds-Hardest-Game.html", "UGS-Assets-2.html", "UGS-Assets.html",
+        "abaf.html", "abandoned-2.html", "abandoned-3.html", "abandoned-4.html", "abandoned.html", "academicwebsite-2.html",
+        "academicwebsite.html", "achievement-unlocked-2.html", "achievement-unlocked-3.html", "achievement-unlocked.html",
+        "adventure-drivers.html", "ages-of-conflict.html", "alien-hominid.html", "amaze.html", "andys-apple-farm.html",
+        "angry-birds-chrome.html", "archery-world-tour.html", "asgore-saves-his-family.html", "attackhole.html",
+        "autumn_webfishing_main.html", "aviamasters.html", "b398dl2h74v-4.html", "b398dl2h74v-5.html", "backrooms.html",
+        "bacon-may-die.html", "bad-ice-cream-2.html", "bad-ice-cream-3.html", "bad-ice-cream.html", "bad-time-simulator-sans-fight.html",
+        "balatro-dmca-removed.html", "baldis-basics.html", "ball-blast-html5.html", "baseball-bros-official-site.html",
+        "baseball.html", "basket-bros.html", "basket-random.html", "basketball-stars.html", "bazooka-boy.html",
+        "bergentruck_201x.html", "bfdi-branches.html", "big-tower-tiny-square-2.html", "bit-gun-io.html",
+        "bit-planes.html", "bitlife.html", "blackjack-game-online.html", "blade-ball.html", "block-blast-puzzle.html",
+        "blockpost.html", "bloodmoney.html", "bloonstd1.html", "bloonstd3.html", "blumgi-rocket.html",
+        "bob-the-robber-2.html", "boom-slingers-reboom.html", "bopcity.html", "bottle-jump-3d.html", "bouncemasters.html",
+        "bowmasters.html", "boxing-random.html", "brawlguysio.html", "btd5.html", "buckshot-roulette.html",
+        "build-a-big-army.html", "build-a-plane.html", "buildnow-gg.html", "camouflage-and-sniper.html",
+        "candy-crush.html", "cannon-balls-3d.html", "cannon-basketball.html", "car-survival-3d.html", "carol-v2.html",
+        "carrom-clash.html", "cat-connection.html", "cat-gunner.html", "cdn-release.html", "cg-fc-24.html",
+        "chess-classic.html", "chiikawa-puzzle.html", "choppyorc.html", "circloo-2-unblocked.html", "circloo.html",
+        "clash-of-vikings.html", "class-of-09.html", "clothingshop.html", "cocos-creator-slimes-mobile-main.html",
+        "colorwatersort3d.html", "construct-game-68.html", "construct-game-69.html", "cookie-clicker.html",
+        "coolgames.html", "core-ball-level-4.html", "count-masters-stickman-games.html", "countrydefense3d.html",
+        "crazy-cars-unblocked.html", "crazycattle3d-2.html", "crazycattle3d-3.html", "crazycattle3d.html",
+        "crazychicken3d.html", "crazykitty3d.html", "created-with-gamemaker-studio-2.html", "created-with-gamemaker-studio.html",
+        "crossy-road.html", "crush-cars-3d.html", "cut-the-rope-2.html", "cut-the-rope-holiday-gift.html",
+        "cut-the-rope-time-travel.html", "cut-the-rope.html", "dadish-2.html", "dadish-3.html", "dadish.html",
+        "dadish3d.html", "daily-dadish.html", "dalgona-candy-honeycomb-cookie.html", "danthemandefold-1110.html",
+        "dave-and-bambi-v3.html", "dead-plate.html", "death-run-3d.html", "desmos.html", "destroy-the-car-3d.html",
+        "diamond-seeker.html", "dig-deep.html", "dlife.html", "do-not-take-this-cat-home.html", "dogeminer.html",
+        "dont-you-lecture-me-with-your-thirty-dollar-website.html", "dosbox-2.html", "dosbox.html", "dragon-vs-bricks.html",
+        "draw-cl.html", "draw-the-hill.html", "drawjoust.html", "dreadhead-parkour.html", "drift-boss.html",
+        "drive-mad.html", "driven-wild-ðÿšðÿœ.html", "drop-and-roll.html", "duck-life.html", "ducklife2worldchampion.html",
+        "ducklife3game.html", "ducklife4.html", "elastic-face.html", "elementalmasters.html", "emu.html",
+        "emujs.html", "emulatorjs-demo.html", "endless-aethos.html", "endoparasitic.html", "escape-road.html",
+        "escaperoad2.html", "everyday-2.html", "everyday.html", "evil-glitch.html", "evolving-bombs-3d.html",
+        "evowarsio.html", "fallout.html", "fancy-pants-adventure-world-3.html", "fancy-pants-adventure-world-4-part-1.html",
+        "fancy-pants-adventure-world-4-part-2.html", "fancypantsadventure.html", "fashion-battle.html",
+        "find-the-alien.html", "fireboy-watergirl-2-light-temple.html", "fireboy-watergirl-3-ice-temple.html",
+        "five-nights-at-candys-1.html", "five-nights-at-candys-2.html", "five-nights-at-freddys-1.html",
+        "five-nights-at-freddys-2.html", "five-nights-at-freddys-3.html", "five-nights-at-freddys-4-halloween.html",
+        "five-nights-at-freddys-4.html", "five-nights-at-freddys-pizzeria-simulator.html", "five-nights-at-freddys-sister-location.html",
+        "five-nights-at-freddys-ucn.html", "five-nights-at-freddys-world.html", "five-nights-at-winstons.html",
+        "flambe-game-jsembed.html", "flappy-bird-multiplayer.html", "flappy-dunk.html", "flashswfcannon-basketball-2.html",
+        "flashswfcubefield.html", "flashswfthisistheonlylevel.html", "flick-goal.html", "flip-master.html",
+        "fnf-cyber-sensation-friday-night-funkin.html", "fnf-imposter-v4-copy.html", "fnf-soft-online-friday-night-funkin.html",
+        "fnf-vs-shaggy.html", "force-race.html", "forknsausage.html", "fortzone-battle-royale.html",
+        "free-plinko-game-online.html", "friday-night-funkin-2.html", "friday-night-funkin-3.html",
+        "friday-night-funkin-4.html", "friday-night-funkin-5.html", "friday-night-funkin-fnf-vs-tricky-version-2-phase-3-w-cheat-bot.html",
+        "friday-night-funkin-hatsune-miku.html", "friday-night-funkin-lullaby.html", "friday-night-funkin-psych-engine-2.html",
+        "friday-night-funkin-psych-engine-3.html", "friday-night-funkin-psych-engine.html", "friday-night-funkin.html",
+        "friday-night-funkinâ-sarventes-midfight-masses.html", "fruit-ninja.html", "geometry-dash.html",
+        "giant-wanted.html", "gladihoppers.html", "gn-code-editor.html", "gnmathgithubio-kindergarten.html",
+        "gnmathgithubio-kindergarten2.html", "gobble.html", "gods-flesh.html", "going-balls-.html",
+        "google-classroom-game.html", "google-feud.html", "granny-original.html", "grow-a-garden-in-growdenio-free-garden-game.html",
+        "guess-their-answer.html", "gun-clone.html", "gunbuild.html", "gunspin.html", "gxc-game-2.html",
+        "gxc-game.html", "happy-sheepies.html", "harvestio.html", "hcr-lite-10.html", "highheels.html",
+        "highway-racer-2-alt.html", "highway-racer-2.html", "highway-racer.html", "hit-single-real.html",
+        "hotline-miami.html", "html5-doodle-jump.html", "hula-hoop-race.html", "human-expenditure-program.html",
+        "hype.html", "hypno-v2.html", "ice-dodo.html", "idle-breakout.html", "idle-dice.html",
+        "idle-lumber-inc.html", "idle-mining-empire-unblocked.html", "impossiblequiz.html", "index.html",
+        "indie-cross.html", "j.html", "jelly-mario.html", "jelly-restaurant.html", "journey-downhill.html",
+        "just-fall.html", "kaji-run.html", "kapi.html", "kindergarten3port.html", "kitchen-bazar.html",
+        "kittytoy.html", "knights-arena.html", "laceys-flash-games.html", "layers-roll.html", "lazy-jumper.html",
+        "learn-to-fly.html", "learn2fly2.html", "level2.html", "little-runmo.html", "lobotomy-dash-funkin.html",
+        "love-letters.html", "madalin-stunt-cars-2.html", "madalin-stunt-cars-3.html", "make-a-superboat.html",
+        "makeover-run.html", "man-runner-2048.html", "maze-speedrun.html", "mega-car-jumps.html",
+        "melon-playground-game-files.html", "merge-harvest.html", "mineSW.html", "minecraft-1122.html",
+        "minecraft-152.html", "minecraft-188.html", "minecraft-alpha-126.html", "minecraft-b13.html",
+        "minecraft-beta-173.html", "minecraft-indev.html", "minecraft-web-client.html", "minesweeperplus.html",
+        "mob-control.html", "money-rush.html", "monkey-mart.html", "monster-box-3d.html", "monster-tracks.html",
+        "moto-2.html", "moto-x3m-2.html", "moto-x3m-3.html", "moto-x3m-pool-party.html", "moto.html",
+        "motox3m-6-spooky-land.html", "mx-offroad-mountain-bike.html", "my-fitness-club.html", "myteardrop.html",
+        "n-101-1.html", "new-project-2.html", "new-project.html", "ngon.html", "ngr.html",
+        "nickelodeon-2.html", "nickelodeon-3.html", "nickelodeon-4.html", "nickelodeon.html", "nijika39s-ahoge.html",
+        "ninja-vs-evilcorp.html", "nz-portable.html", "om-nom-run.html", "omori.html", "outredgames.html",
+        "ovo-b.html", "ovo-dimensions.html", "ovo2.html", "pac-man-horror.html", "pacman.html",
+        "padlet.html", "papa_s_freezeria.html", "papas-bakeria.html", "papasburgeria.html", "papasdonuteria.html",
+        "papaspizzeria_v2.html", "papastacomia.html", "paperio-2.html", "papery-planes.html", "parking-fury-3d.html",
+        "parking-rush.html", "pi-playables.html", "pibby-apocalypse.html", "pibby-slop.html", "pico8-cartridge-2.html",
+        "pico8-cartridge.html", "pixel-gun-survival.html", "pizza-tower-110-web-port.html", "play-basketball-frvr.html",
+        "playjs.html", "pokey-ball.html", "polytrack.html", "portaboy.html", "postal-play-free-on-the-web.html",
+        "pottery-master.html", "pou.html", "protektor.html", "pvz2-gardendless-online-042.html", "pvz_9_15.html",
+        "quake-iii-arena.html", "race-master.html", "raft-wars-2-14853.html", "raftwars.html", "ragdoll-archers.html",
+        "ragdoll-hit.html", "rainbow-obby-v03x.html", "recoil-unblocked-.html", "red-ball-3.html", "redball4.html",
+        "retro-bowl-college.html", "retro-bowl.html", "riddletransfer2.html", "roadoffury.html", "robot-invasion.html",
+        "rolly-vortex.html", "rooftop-snipers-2.html", "rooftop-snipers.html", "ruffle-2.html", "ruffle-player.html",
+        "ruffle.html", "run-3.html", "runner-template-2.html", "runner-template-3.html", "runner-template.html",
+        "runrich.html", "sandboxels.html", "sandspiel.html", "sandstone.html", "sandtris.html",
+        "scrap-metal-3-infernal-trap.html", "sdk-2.html", "sdk.html", "seat-jam-3d.html", "secure_LearnToFlyIdle.html",
+        "seraph-2.html", "seraph-3.html", "seraph-4.html", "seraph-5.html", "seraph-6.html", "seraph.html",
+        "shapez-demo.html", "shipo.html", "shooting-master.html", "shovel-3d.html", "sky-riders.html",
+        "slime-rancher-decompiled-v021.html", "slitherio.html", "slope-2.html", "slow-roads-main.html",
+        "smash-karts.html", "snowbattleio.html", "snowrider3d.html", "sonic-2-communitys-cut.html",
+        "sonic-3-air.html", "sonic-cd.html", "sonic-exe-4.html", "sonic-legacy.html", "sonic-mania.html",
+        "soundboard.html", "space-waves.html", "spacebar-clicker.html", "spi.html", "spongebob-run.html",
+        "spongebob-thekahrahtaysquid.html", "sprunki.html", "stateio-yt.html", "steal-brainrot-online.html",
+        "stickman-and-guns.html", "stickman-boost.html", "stickman-climb.html", "stickman-fight-ragdoll.html",
+        "stickman-hook.html", "stone-grass-mowing-simulator.html", "subway-surfers-barcelona.html",
+        "subway-surfers-beijing.html", "subway-surfers-berlin.html", "subway-surfers-buenos-aires.html",
+        "subway-surfers-havana.html", "subway-surfers-houston.html", "subway-surfers-iceland.html",
+        "subway-surfers-london.html", "subway-surfers-mexico.html", "subway-surfers-miami.html",
+        "subway-surfers-monaco.html", "subway-surfers-new-orleans.html", "subway-surfers-st-petersburg.html",
+        "subway-surfers-winter-holiday.html", "subway-surfers-zurich.html", "subway-surfers.html",
+        "sunday-hd.html", "super-mario-64-on-the-web.html", "super-star-car.html", "super-stickman-golf.html",
+        "superhot.html", "supermario63.html", "supermarket-3d.html", "survival-race.html", "survive-to-victory.html",
+        "sushi-roll.html", "tanuki-sunset.html", "tasty-pastry-party.html", "tattletail.html", "tboiwotl-v1.666.html",
+        "telekinesis-car-3d.html", "telekinesis-master.html", "telekinesis-quest.html", "temple-run-2.html",
+        "territorialio.html", "thats-not-my-neighbor.html", "the-deadseat.html", "the-final-earth-2.html",
+        "they-are-coming.html", "tiletopia.html", "time-shooter-2.html", "time-shooter-3-swat.html",
+        "time-shooter.html", "tiny-fishing-1.html", "tombofthemask.html", "tosstheturtle.html", "tower-crash-3d.html",
+        "toy-rider.html", "traffic-rider.html", "triple-match-3d.html", "ttg-2.html", "ttg.html",
+        "tug-of-war.html", "tunnel-rush.html", "turbo-stars.html", "twiddlefinger.html", "twisted-rope-3d.html",
+        "ugss-2.html", "ugss-3.html", "ugss.html", "undertale-yellow.html", "undertale.html",
+        "unity-web-player-deltatraveler.html", "unity-web-player-roulette.html", "unity-web-player-swordfight.html",
+        "unity-webgl-player-adventure-capitalist.html", "unity-webgl-player-amanda-the-adventurer.html",
+        "unity-webgl-player-bad-parenting-1.html", "unity-webgl-player-baldis-basics-classic-remastered.html",
+        "unity-webgl-player-baldis-basics-plus.html", "unity-webgl-player-cheesechompers-3d.html",
+        "unity-webgl-player-cluster-rush.html", "unity-webgl-player-cuphead.html",
+        "unity-webgl-player-fears-to-fathom-home-alone.html", "unity-webgl-player-funny-puzzles.html",
+        "unity-webgl-player-getting-over-it.html", "unity-webgl-player-gg-kart.html", "unity-webgl-player-granny-2.html",
+        "unity-webgl-player-granny-3.html", "unity-webgl-player-hollow-knight.html",
+        "unity-webgl-player-i-woke-up-next-to-you-again.html", "unity-webgl-player-jelly-drift.html",
+        "unity-webgl-player-karlson.html", "unity-webgl-player-ld47.html", "unity-webgl-player-luminous-strike.html",
+        "unity-webgl-player-oldch2rippedtwo.html", "unity-webgl-player-oshioshipunch.html",
+        "unity-webgl-player-people-playground.html", "unity-webgl-player-raft.html", "unity-webgl-player-repo.html",
+        "unity-webgl-player-rerun.html", "unity-webgl-player-rolling-sky.html", "unity-webgl-player-schoolboy-runaway.html",
+        "unity-webgl-player-slender.html", "unity-webgl-player-slope-plus.html", "unity-webgl-player-sort-the-court.html",
+        "unity-webgl-player-speed-stars.html", "unity-webgl-player-spiderdoll.html", "unity-webgl-player-station-141.html",
+        "unity-webgl-player-station-saturn.html", "unity-webgl-player-stick-with-it.html",
+        "unity-webgl-player-themanfromthewindow.html", "unity-webgl-player-ultrakill.html", "vex-3-xmas.html",
+        "vex-3.html", "vex-4.html", "vex-5.html", "vex-6.html", "vex-7.html", "vex-8.html", "vex-challenges.html",
+        "vex-x3m-2.html", "vex-x3m.html", "vex.html", "vex2.html", "vs-qt-mod.html", "wall-crawler.html",
+        "war-regions.html", "waterworks.html", "weapon-craft-run.html", "weapon-upgrade-rush.html",
+        "web-port.html", "webgl-helpers.html", "webosu-20.html", "wednesday-infedility.html", "wheelscale.html",
+        "wheely-5.html", "wheely-6.html", "wheely-7.html", "wheely-8.html", "wheely.html", "wheely2.html",
+        "wheely3.html", "wheely4.html", "wordle.html", "worldbox.html", "worlds4.html", "xash.html",
+        "yanderesimulator.html", "youhou-mother.html", "youtube-playable.html", "youtube-playables.html",
+        "yt-game-wrapper-webgl-template-10.html", "yt-game-wrapper-webgl-template-11.html",
+        "yt-game-wrapper-webgl-template-12.html", "yt-game-wrapper-webgl-template-13.html",
+        "yt-game-wrapper-webgl-template-2.html", "yt-game-wrapper-webgl-template-3.html",
+        "yt-game-wrapper-webgl-template-4.html", "yt-game-wrapper-webgl-template-5.html",
+        "yt-game-wrapper-webgl-template-6.html", "yt-game-wrapper-webgl-template-7.html",
+        "yt-game-wrapper-webgl-template-8.html", "yt-game-wrapper-webgl-template-9.html",
+        "yt-game-wrapper-webgl-template.html", "yume-nikki.html"
+    ];
+
+    const basePath = "/html/";
+
+    function formatGameName(filename) {
+        let name = filename.replace(/\.html$/i, '');
+        name = name.replace(/[-_]/g, ' ');
+        name = name.replace(/%20/g, ' ');
+        name = name.replace(/\./g, ' ');
+        if (name.toLowerCase() === 'index') {
+            return 'index';
+        }
+        return name;
+    }
+
+    function renderGames(filterText) {
+        const container = document.getElementById('gamesGrid');
+        const counterSpan = document.getElementById('counterDisplay');
+        const lowerFilter = filterText.toLowerCase();
+
+        let filtered = gameFiles;
+        if (lowerFilter) {
+            filtered = gameFiles.filter(function(file) {
+                const displayName = formatGameName(file).toLowerCase();
+                return displayName.includes(lowerFilter) || file.toLowerCase().includes(lowerFilter);
+            });
+        }
+
+        counterSpan.innerText = filtered.length + ' / ' + gameFiles.length + ' games';
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="no-results">no games found</div>';
+            return;
+        }
+
+        let html = '';
+        for (let i = 0; i < filtered.length; i++) {
+            const file = filtered[i];
+            const displayName = formatGameName(file);
+            const fullPath = basePath + file;
+            html += '<div class="game-card">';
+            html += '<a href="' + fullPath + '" class="game-link" target="_top">' + escapeHtml(displayName) + '</a>';
+            html += '</div>';
+        }
+        container.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    let debounceTimer;
+    searchInput.addEventListener('input', function(e) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() {
+            renderGames(e.target.value);
+        }, 200);
+    });
+
+    renderGames('');
+</script>
+</body>
+</html>

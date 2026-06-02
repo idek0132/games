@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f0f11;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #eaeef5;
+            letter-spacing: -0.3px;
+        }
+
+        .toolbar {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            background: #1a1d24;
+            border: 1px solid #2c303a;
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            color: #e2e8f0;
+            font-size: 0.85rem;
+            width: 260px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .search-box:focus {
+            border-color: #4a5b8c;
+        }
+
+        .counter {
+            font-size: 0.8rem;
+            color: #7a7f8f;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .game-card {
+            background: #1a1d24;
+            border: 1px solid #2a2e38;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            background: #222630;
+            border-color: #3d455c;
+            transform: translateY(-3px);
+        }
+
+        .game-image {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #0f0f11;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .game-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.2s ease;
+        }
+
+        .game-card:hover .game-image img {
+            transform: scale(1.02);
+        }
+
+        .game-link {
+            display: block;
+            text-decoration: none;
+            color: #cbd5e6;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.75rem;
+            text-align: center;
+            word-break: break-word;
+            line-height: 1.3;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .game-link:visited {
+            color: #9aa3b8;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+            background: #1a1d24;
+            border-radius: 12px;
+            border: 1px solid #2a2e38;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+            .game-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 0.75rem;
+            }
+            .game-link {
+                font-size: 0.7rem;
+                padding: 0.5rem;
+            }
+            .search-box {
+                width: 100%;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Games Gallery</h1>
+    </div>
+
+    <div class="toolbar">
+        <input type="text" id="searchInput" class="search-box" placeholder="Find a game..." autocomplete="off">
+        <div class="counter" id="counterDisplay">0 games</div>
+    </div>
+
+    <div id="gamesGrid" class="game-grid"></div>
+</div>
+
+<script>
+    const gamesData = [
+        { "name": "Bowmasters", "img": "/img/0.png", "url": "/stores/gn-math/0.html" },
+        { "name": "OvO", "img": "/img/1.png", "url": "/stores/gn-math/1.html" },
+        { "name": "OvO 2", "img": "/img/2.png", "url": "/stores/gn-math/2.html" },
+        { "name": "OvO 3 Dimensions", "img": "/img/3.png", "url": "/stores/gn-math/3.html" },
+        { "name": "Gladihoppers", "img": "/img/4.png", "url": "/stores/gn-math/4.html" },
+        { "name": "Ice Dodo", "img": "/img/5.png", "url": "/stores/gn-math/5.html" },
+        { "name": "Block Blast", "img": "/img/6.png", "url": "/stores/gn-math/6.html" },
+        { "name": "Jetpack Joyride", "img": "/img/7.png", "url": "/stores/gn-math/7.html" },
+        { "name": "Friday Night Funkin", "img": "/img/8.png", "url": "/stores/gn-math/8-a.html" },
+        { "name": "Sprunki", "img": "/img/9.png", "url": "/stores/gn-math/9.html" },
+        { "name": "Temple Run 2", "img": "/img/10.png", "url": "/stores/gn-math/10.html" },
+        { "name": "Stickman Hook", "img": "/img/11.png", "url": "/stores/gn-math/11.html" },
+        { "name": "Subway Surfers: San Francisco", "img": "/img/12.png", "url": "/stores/gn-math/12.html" },
+        { "name": "Attack Hole", "img": "/img/13.png", "url": "/stores/gn-math/13.html" },
+        { "name": "Color Water Sort 3D", "img": "/img/15.png", "url": "/stores/gn-math/15.html" },
+        { "name": "Magic Tiles 3", "img": "/img/17.png", "url": "/stores/gn-math/17.html" },
+        { "name": "Supreme Duelist", "img": "/img/19.png", "url": "/stores/gn-math/19.html" },
+        { "name": "Tall Man Run", "img": "/img/20.png", "url": "/stores/gn-math/20.html" },
+        { "name": "Turbo Stars", "img": "/img/21.png", "url": "/stores/gn-math/21.html" },
+        { "name": "Mob Control HTML5", "img": "/img/22.png", "url": "/stores/gn-math/22.html" },
+        { "name": "Pou", "img": "/img/23.png", "url": "/stores/gn-math/23.html" },
+        { "name": "Crossy Road", "img": "/img/24.png", "url": "/stores/gn-math/24.html" },
+        { "name": "Amaze", "img": "/img/26.png", "url": "/stores/gn-math/26.html" },
+        { "name": "Geometry Dash Lite", "img": "/img/27.png", "url": "/stores/gn-math/27.html" },
+        { "name": "Basketball Frvr", "img": "/img/28.png", "url": "/stores/gn-math/28.html" },
+        { "name": "Bazooka Boy", "img": "/img/29.png", "url": "/stores/gn-math/29.html" },
+        { "name": "Bottle Jump 3D", "img": "/img/30.png", "url": "/stores/gn-math/30.html" },
+        { "name": "Dig Deep", "img": "/img/32.png", "url": "/stores/gn-math/32.html" },
+        { "name": "Retro Bowl", "img": "/img/33.png", "url": "/stores/gn-math/33.html" },
+        { "name": "Retro Bowl College", "img": "/img/34.png", "url": "/stores/gn-math/34.html" },
+        { "name": "Drive Mad", "img": "/img/35.png", "url": "/stores/gn-math/35.html" },
+        { "name": "Monster Tracks", "img": "/img/36.png", "url": "/stores/gn-math/36.html" },
+        { "name": "Gobble", "img": "/img/37.png", "url": "/stores/gn-math/37.html" },
+        { "name": "Five Nights at Freddy's", "img": "/img/38.png", "url": "/stores/gn-math/38.html" },
+        { "name": "Five Nights at Freddy's 2", "img": "/img/39.png", "url": "/stores/gn-math/39.html" },
+        { "name": "Five Nights at Freddy's 3", "img": "/img/40.png", "url": "/stores/gn-math/40.html" },
+        { "name": "Five Nights at Freddy's 4", "img": "/img/41.png", "url": "/stores/gn-math/41.html" },
+        { "name": "Road of Fury", "img": "/img/42.png", "url": "/stores/gn-math/42.html" },
+        { "name": "Driven Wild", "img": "/img/43.png", "url": "/stores/gn-math/43.html" },
+        { "name": "Ragdoll Hit", "img": "/img/44.png", "url": "/stores/gn-math/44.html" },
+        { "name": "Vex 1", "img": "/img/45.png", "url": "/stores/gn-math/45.html" },
+        { "name": "Vex 2", "img": "/img/46.png", "url": "/stores/gn-math/46.html" },
+        { "name": "Vex 3", "img": "/img/47.png", "url": "/stores/gn-math/47.html" },
+        { "name": "Vex 3 XMAS", "img": "/img/48.png", "url": "/stores/gn-math/48.html" },
+        { "name": "Vex 4", "img": "/img/49.png", "url": "/stores/gn-math/49.html" },
+        { "name": "Vex 5", "img": "/img/50.png", "url": "/stores/gn-math/50.html" },
+        { "name": "Vex 6", "img": "/img/51.png", "url": "/stores/gn-math/51.html" },
+        { "name": "Vex 7", "img": "/img/52.png", "url": "/stores/gn-math/52.html" },
+        { "name": "Vex 8", "img": "/img/53.png", "url": "/stores/gn-math/53.html" },
+        { "name": "Vex Challenges", "img": "/img/54.png", "url": "/stores/gn-math/54.html" },
+        { "name": "Vex X3M", "img": "/img/55.png", "url": "/stores/gn-math/55.html" },
+        { "name": "Vex X3M 2", "img": "/img/56.png", "url": "/stores/gn-math/56.html" },
+        { "name": "Monkey Mart", "img": "/img/57.png", "url": "/stores/gn-math/57.html" },
+        { "name": "Achievement Unlocked", "img": "/img/60.png", "url": "/stores/gn-math/60.html" },
+        { "name": "Achievement Unlocked 2", "img": "/img/61.png", "url": "/stores/gn-math/61.html" },
+        { "name": "Achievement Unlocked 3", "img": "/img/62.png", "url": "/stores/gn-math/62.html" },
+        { "name": "Angry Birds", "img": "/img/63.png", "url": "/stores/gn-math/63.html" },
+        { "name": "Backrooms", "img": "/img/64.png", "url": "/stores/gn-math/64.html" },
+        { "name": "Baldi's Basics", "img": "/img/65.png", "url": "/stores/gn-math/65.html" },
+        { "name": "Basket Random", "img": "/img/66.png", "url": "/stores/gn-math/66.html" },
+        { "name": "Big Tower Tiny Square", "img": "/img/67.png", "url": "/stores/gn-math/67.html" },
+        { "name": "BitLife", "img": "/img/70.png", "url": "/stores/gn-math/70.html" },
+        { "name": "Bloons TD", "img": "/img/71.png", "url": "/stores/gn-math/71.html" },
+        { "name": "Bloons TD 2", "img": "/img/72.png", "url": "/stores/gn-math/72.html" },
+        { "name": "Bloons TD 3", "img": "/img/73.png", "url": "/stores/gn-math/73.html" },
+        { "name": "Bloons TD 4", "img": "/img/74.png", "url": "/stores/gn-math/74.html" },
+        { "name": "Bloons TD 5", "img": "/img/75.png", "url": "/stores/gn-math/75.html" },
+        { "name": "Bob The Robber 2", "img": "/img/76.png", "url": "/stores/gn-math/76.html" },
+        { "name": "Boxing Random", "img": "/img/77.png", "url": "/stores/gn-math/77.html" },
+        { "name": "Burrito Bison", "img": "/img/78.png", "url": "/stores/gn-math/78.html" },
+        { "name": "Cannon Basketball", "img": "/img/79.png", "url": "/stores/gn-math/79.html" },
+        { "name": "Cannon Basketball 2", "img": "/img/80.png", "url": "/stores/gn-math/80.html" },
+        { "name": "Cookie Clicker", "img": "/img/82.png", "url": "/stores/gn-math/82.html" },
+        { "name": "Coreball", "img": "/img/83.png", "url": "/stores/gn-math/83.html" },
+        { "name": "Cubefield", "img": "/img/84.png", "url": "/stores/gn-math/84.html" },
+        { "name": "Cut the Rope", "img": "/img/85.png", "url": "/stores/gn-math/85.html" },
+        { "name": "Draw Climber", "img": "/img/86.png", "url": "/stores/gn-math/86.html" },
+        { "name": "Fireboy and Watergirl 2", "img": "/img/88.png", "url": "/stores/gn-math/88.html" },
+        { "name": "Fireboy and Watergirl 3", "img": "/img/89.png", "url": "/stores/gn-math/89.html" },
+        { "name": "Granny", "img": "/img/90.png", "url": "/stores/gn-math/90.html" },
+        { "name": "Gunspin", "img": "/img/91.png", "url": "/stores/gn-math/91.html" },
+        { "name": "Highway Racer 2", "img": "/img/92.png", "url": "/stores/gn-math/92.html" },
+        { "name": "Johnny Trigger", "img": "/img/93.png", "url": "/stores/gn-math/93.html" },
+        { "name": "Journey Downhill", "img": "/img/94.png", "url": "/stores/gn-math/94.html" },
+        { "name": "Line Rider", "img": "/img/95.png", "url": "/stores/gn-math/95.html" },
+        { "name": "Moto X3M", "img": "/img/96.png", "url": "/stores/gn-math/96.html" },
+        { "name": "Moto X3M 2", "img": "/img/97.png", "url": "/stores/gn-math/97.html" },
+        { "name": "Moto X3M 3", "img": "/img/98.png", "url": "/stores/gn-math/98.html" },
+        { "name": "Moto X3M Spooky", "img": "/img/99.png", "url": "/stores/gn-math/99.html" },
+        { "name": "Ninja vs EvilCorp", "img": "/img/101.png", "url": "/stores/gn-math/101.html" },
+        { "name": "Paper.io 2", "img": "/img/102.png", "url": "/stores/gn-math/102.html" },
+        { "name": "The World's Hardest Game", "img": "/img/103.png", "url": "/stores/gn-math/103.html" },
+        { "name": "The World's Hardest Game 3", "img": "/img/104.png", "url": "/stores/gn-math/104.html" },
+        { "name": "The World's Hardest Game 4", "img": "/img/105.png", "url": "/stores/gn-math/105.html" },
+        { "name": "This Is The Only Level", "img": "/img/106.png", "url": "/stores/gn-math/106.html" },
+        { "name": "This Is The Only Level 2", "img": "/img/107.png", "url": "/stores/gn-math/107.html" },
+        { "name": "Tiny Fishing", "img": "/img/108.png", "url": "/stores/gn-math/108.html" },
+        { "name": "Tomb Of The Mask", "img": "/img/109.png", "url": "/stores/gn-math/109.html" },
+        { "name": "Toss The Turtle", "img": "/img/110.png", "url": "/stores/gn-math/110.html" },
+        { "name": "Tube Jumpers", "img": "/img/111.png", "url": "/stores/gn-math/111.html" },
+        { "name": "Wordle", "img": "/img/112.png", "url": "/stores/gn-math/112.html" },
+        { "name": "Ruffle", "img": "/img/113.png", "url": "/stores/gn-math/113.html" },
+        { "name": "8 Ball Pool", "img": "/img/115.png", "url": "/stores/gn-math/115.html" },
+        { "name": "Offroad Mountain Bike", "img": "/img/116.png", "url": "/stores/gn-math/116.html" },
+        { "name": "Space Waves", "img": "/img/117.png", "url": "/stores/gn-math/117.html" },
+        { "name": "Snow Rider 3D", "img": "/img/119.png", "url": "/stores/gn-math/119.html" },
+        { "name": "Fortzone Battle Royale", "img": "/img/120.png", "url": "/stores/gn-math/120.html" },
+        { "name": "Brawl Guys.io", "img": "/img/121.png", "url": "/stores/gn-math/121.html" },
+        { "name": "Survival Race", "img": "/img/122.png", "url": "/stores/gn-math/122.html" },
+        { "name": "Poly Track", "img": "/img/123.png", "url": "/stores/gn-math/123.html" },
+        { "name": "Moto X3M Pool Party", "img": "/img/124.png", "url": "/stores/gn-math/124.html" },
+        { "name": "Granny 2", "img": "/img/125.png", "url": "/stores/gn-math/125.html" },
+        { "name": "Granny 3", "img": "/img/126.png", "url": "/stores/gn-math/126.html" },
+        { "name": "Fashion Battle", "img": "/img/127.png", "url": "/stores/gn-math/127.html" },
+        { "name": "Flappy Bird", "img": "/img/129.png", "url": "/stores/gn-math/129.html" },
+        { "name": "Subway Surfers: Barcelona", "img": "/img/131.png", "url": "/stores/gn-math/131.html" },
+        { "name": "Subway Surfers: Beijing", "img": "/img/132.png", "url": "/stores/gn-math/132.html" },
+        { "name": "Subway Surfers: Berlin", "img": "/img/133.png", "url": "/stores/gn-math/133.html" },
+        { "name": "Subway Surfers: Buenos Aires", "img": "/img/134.png", "url": "/stores/gn-math/134.html" },
+        { "name": "Subway Surfers: Havana", "img": "/img/135.png", "url": "/stores/gn-math/135.html" },
+        { "name": "Subway Surfers: Houston", "img": "/img/136.png", "url": "/stores/gn-math/136.html" },
+        { "name": "Subway Surfers: Iceland", "img": "/img/137.png", "url": "/stores/gn-math/137.html" },
+        { "name": "Subway Surfers: London", "img": "/img/138.png", "url": "/stores/gn-math/138.html" },
+        { "name": "Subway Surfers: Mexico", "img": "/img/139.png", "url": "/stores/gn-math/139.html" },
+        { "name": "Subway Surfers: Miami", "img": "/img/140.png", "url": "/stores/gn-math/140.html" },
+        { "name": "Subway Surfers: Monaco", "img": "/img/141.png", "url": "/stores/gn-math/141.html" },
+        { "name": "Subway Surfers: New Orleans", "img": "/img/142.png", "url": "/stores/gn-math/142.html" },
+        { "name": "Subway Surfers: St. Petersburg", "img": "/img/143.png", "url": "/stores/gn-math/143.html" },
+        { "name": "Subway Surfers: Winter Holiday", "img": "/img/144.png", "url": "/stores/gn-math/144.html" },
+        { "name": "Subway Surfers: Zurich", "img": "/img/145.png", "url": "/stores/gn-math/145.html" },
+        { "name": "Archery World Tour", "img": "/img/148.png", "url": "/stores/gn-math/148.html" },
+        { "name": "Ball Blast", "img": "/img/149.png", "url": "/stores/gn-math/149.html" },
+        { "name": "Cannon Balls 3D", "img": "/img/150.png", "url": "/stores/gn-math/150.html" },
+        { "name": "Chess Classic", "img": "/img/151.png", "url": "/stores/gn-math/151.html" },
+        { "name": "Flappy Dunk", "img": "/img/153.png", "url": "/stores/gn-math/153.html" },
+        { "name": "Fork n Sausage", "img": "/img/154.png", "url": "/stores/gn-math/154.html" },
+        { "name": "Guess Their Answer", "img": "/img/155.png", "url": "/stores/gn-math/155.html" },
+        { "name": "Harvest.io", "img": "/img/156.png", "url": "/stores/gn-math/156.html" },
+        { "name": "Parking Rush", "img": "/img/159.png", "url": "/stores/gn-math/159.html" },
+        { "name": "Race Master 3D", "img": "/img/160.png", "url": "/stores/gn-math/160.html" },
+        { "name": "State.io", "img": "/img/161.png", "url": "/stores/gn-math/161.html" },
+        { "name": "Tower Crash 3D", "img": "/img/162.png", "url": "/stores/gn-math/162.html" },
+        { "name": "Crazy Cattle 3D", "img": "/img/164.png", "url": "/stores/gn-math/164-temp2.html" },
+        { "name": "Blade Ball", "img": "/img/167.png", "url": "/stores/gn-math/167.html" },
+        { "name": "Big Tower Tiny Square 2", "img": "/img/170.png", "url": "/stores/gn-math/170.html" },
+        { "name": "Candy Crush", "img": "/img/171.png", "url": "/stores/gn-math/171.html" },
+        { "name": "Melon Playground", "img": "/img/172.png", "url": "/stores/gn-math/172.html" },
+        { "name": "World Box", "img": "/img/174.png", "url": "/stores/gn-math/174.html" },
+        { "name": "Run 1", "img": "/img/175.png", "url": "/stores/gn-math/175.html" },
+        { "name": "Run 2", "img": "/img/176.png", "url": "/stores/gn-math/176.html" },
+        { "name": "Run 3", "img": "/img/177.png", "url": "/stores/gn-math/177.html" },
+        { "name": "Soundboard", "img": "/img/179.png", "url": "/stores/gn-math/179.html" },
+        { "name": "n-gon", "img": "/img/180.png", "url": "/stores/gn-math/180.html" },
+        { "name": "Minecraft 1.8.8", "img": "/img/181.png", "url": "/stores/gn-math/181.html" },
+        { "name": "Minecraft 1.12.2", "img": "/img/182.png", "url": "/stores/gn-math/182.html" },
+        { "name": "Undertale", "img": "/img/184.png", "url": "/stores/gn-math/184.html" },
+        { "name": "Five Nights at Freddy's: Sister Location", "img": "/img/185.png", "url": "/stores/gn-math/185.html" },
+        { "name": "Ragdoll Archers", "img": "/img/186.png", "url": "/stores/gn-math/186.html" },
+        { "name": "Scrap Metal 3", "img": "/img/188.png", "url": "/stores/gn-math/188.html" },
+        { "name": "Five Nights at Freddy's: World", "img": "/img/190.png", "url": "/stores/gn-math/190.html" },
+        { "name": "Five Nights at Freddy's: Pizza Simulator", "img": "/img/191.png", "url": "/stores/gn-math/191.html" },
+        { "name": "Five Nights at Freddy's: Ultimate Custom Night", "img": "/img/192.png", "url": "/stores/gn-math/192.html" },
+        { "name": "Do NOT Take This Cat Home", "img": "/img/193.png", "url": "/stores/gn-math/193.html" },
+        { "name": "People Playground", "img": "/img/194.png", "url": "/stores/gn-math/194.html" },
+        { "name": "REPO", "img": "/img/195.png", "url": "/stores/gn-math/623.html" },
+        { "name": "ULTRAKILL", "img": "/img/196.png", "url": "/stores/gn-math/196.html" },
+        { "name": "Elastic Man", "img": "/img/197.png", "url": "/stores/gn-math/197.html" },
+        { "name": "Slope", "img": "/img/198.png", "url": "/stores/gn-math/198.html" },
+        { "name": "Time Shooter 1", "img": "/img/199.png", "url": "/stores/gn-math/199.html" },
+        { "name": "Time Shooter 2", "img": "/img/200.png", "url": "/stores/gn-math/200.html" },
+        { "name": "Time Shooter 3: SWAT", "img": "/img/201.png", "url": "/stores/gn-math/201.html" },
+        { "name": "Carrom Clash", "img": "/img/202.png", "url": "/stores/gn-math/202.html" },
+        { "name": "Five Nights at Winston's", "img": "/img/204.png", "url": "/stores/gn-math/204.html" },
+        { "name": "Buckshot Roulette", "img": "/img/205.png", "url": "/stores/gn-math/205.html" },
+        { "name": "Tunnel Rush", "img": "/img/206.png", "url": "/stores/gn-math/206.html" },
+        { "name": "Snowbattle.io", "img": "/img/207.png", "url": "/stores/gn-math/207.html" },
+        { "name": "Rolly Vortex", "img": "/img/208.png", "url": "/stores/gn-math/208.html" },
+        { "name": "Draw the Hill", "img": "/img/209.png", "url": "/stores/gn-math/209.html" },
+        { "name": "Dragon vs Bricks", "img": "/img/210.png", "url": "/stores/gn-math/210.html" },
+        { "name": "Death Run 3D", "img": "/img/211.png", "url": "/stores/gn-math/211.html" },
+        { "name": "Cut the Rope", "img": "/img/212.png", "url": "/stores/gn-math/212.html" },
+        { "name": "Cut the Rope: Time Travel", "img": "/img/213.png", "url": "/stores/gn-math/213.html" },
+        { "name": "Cut the Rope: Holiday Gift", "img": "/img/214.png", "url": "/stores/gn-math/214.html" },
+        { "name": "That's Not My Neighbor", "img": "/img/216.png", "url": "/stores/gn-math/216.html" },
+        { "name": "Hotline Miami", "img": "/img/217.png", "url": "/stores/gn-math/217.html" },
+        { "name": "Papa's Bakeria", "img": "/img/218.png", "url": "/stores/gn-math/218.html" },
+        { "name": "Papa's Burgeria", "img": "/img/219.png", "url": "/stores/gn-math/219.html" },
+        { "name": "Papa's Cheeseria", "img": "/img/220.png", "url": "/stores/gn-math/220.html" },
+        { "name": "Papa's Cupcakeria", "img": "/img/221.png", "url": "/stores/gn-math/221.html" },
+        { "name": "Papa's Donuteria", "img": "/img/222.png", "url": "/stores/gn-math/222.html" },
+        { "name": "Papa's Freezeria", "img": "/img/223.png", "url": "/stores/gn-math/223.html" },
+        { "name": "Papa's Hot Doggeria", "img": "/img/224.png", "url": "/stores/gn-math/224.html" },
+        { "name": "Papa's Pancakeria", "img": "/img/225.png", "url": "/stores/gn-math/225.html" },
+        { "name": "Papa's Pastaria", "img": "/img/226.png", "url": "/stores/gn-math/226.html" },
+        { "name": "Papa's Pizeria", "img": "/img/227.png", "url": "/stores/gn-math/227.html" },
+        { "name": "Papa's Scooperia", "img": "/img/228.png", "url": "/stores/gn-math/228.html" },
+        { "name": "Papa's Sushiria", "img": "/img/229.png", "url": "/stores/gn-math/229.html" },
+        { "name": "Papa's Taco Mia", "img": "/img/230.png", "url": "/stores/gn-math/230.html" },
+        { "name": "Papa's Wingeria", "img": "/img/231.png", "url": "/stores/gn-math/231.html" },
+        { "name": "Plants vs Zombies", "img": "/img/232.png", "url": "/stores/gn-math/232.html" },
+        { "name": "Superhot", "img": "/img/233.png", "url": "/stores/gn-math/233.html" },
+        { "name": "Duck Life", "img": "/img/234.png", "url": "/stores/gn-math/234.html" },
+        { "name": "Duck Life 2", "img": "/img/235.png", "url": "/stores/gn-math/235.html" },
+        { "name": "Duck Life 3", "img": "/img/236.png", "url": "/stores/gn-math/236.html" },
+        { "name": "Duck Life 4", "img": "/img/237.png", "url": "/stores/gn-math/237.html" },
+        { "name": "Red Ball", "img": "/img/239.png", "url": "/stores/gn-math/239.html" },
+        { "name": "Red Ball 2", "img": "/img/240.png", "url": "/stores/gn-math/240.html" },
+        { "name": "Red Ball 3", "img": "/img/241.png", "url": "/stores/gn-math/241.html" },
+        { "name": "Red Ball 4", "img": "/img/242.png", "url": "/stores/gn-math/242.html" },
+        { "name": "Red Ball 4 Vol. 2", "img": "/img/243.png", "url": "/stores/gn-math/243.html" },
+        { "name": "Red Ball 4 Vol. 3", "img": "/img/244.png", "url": "/stores/gn-math/244.html" },
+        { "name": "Wheely", "img": "/img/245.png", "url": "/stores/gn-math/245.html" },
+        { "name": "Wheely 2", "img": "/img/246.png", "url": "/stores/gn-math/246.html" },
+        { "name": "Wheely 3", "img": "/img/247.png", "url": "/stores/gn-math/247.html" },
+        { "name": "Wheely 4", "img": "/img/248.png", "url": "/stores/gn-math/248.html" },
+        { "name": "Wheely 5", "img": "/img/249.png", "url": "/stores/gn-math/249.html" },
+        { "name": "Wheely 6", "img": "/img/250.png", "url": "/stores/gn-math/250.html" },
+        { "name": "Wheely 7", "img": "/img/251.png", "url": "/stores/gn-math/251.html" },
+        { "name": "Wheely 8", "img": "/img/252.png", "url": "/stores/gn-math/252.html" },
+        { "name": "Crazy Chicken 3D", "img": "/img/255.png", "url": "/stores/gn-math/255.html" },
+        { "name": "Crazy Kitty 3D", "img": "/img/256.png", "url": "/stores/gn-math/256.html" },
+        { "name": "Google Baseball", "img": "/img/257.png", "url": "/stores/gn-math/257.html" },
+        { "name": "Class of '09", "img": "/img/259.png", "url": "/stores/gn-math/259.html" },
+        { "name": "Fruit Ninja", "img": "/img/261.png", "url": "/stores/gn-math/261.html" },
+        { "name": "Quake III Arena", "img": "/img/263.png", "url": "/stores/gn-math/263.html" },
+        { "name": "Escape Road", "img": "/img/264.png", "url": "/stores/gn-math/264.html" },
+        { "name": "Escape Road 2", "img": "/img/265.png", "url": "/stores/gn-math/265.html" },
+        { "name": "Speed Stars", "img": "/img/266.png", "url": "/stores/gn-math/266.html" },
+        { "name": "Pizza Tower", "img": "/img/267.png", "url": "/stores/gn-math/267.html" },
+        { "name": "Bacon May Die", "img": "/img/268.png", "url": "/stores/gn-math/268.html" },
+        { "name": "Bad Ice Cream", "img": "/img/269.png", "url": "/stores/gn-math/269.html" },
+        { "name": "Bad Ice Cream 2", "img": "/img/270.png", "url": "/stores/gn-math/270.html" },
+        { "name": "Bad Ice Cream 3", "img": "/img/271.png", "url": "/stores/gn-math/271.html" },
+        { "name": "Basketball Stars", "img": "/img/272.png", "url": "/stores/gn-math/272.html" },
+        { "name": "BlockPost", "img": "/img/273.png", "url": "/stores/gn-math/273.html" },
+        { "name": "CircloO", "img": "/img/274.png", "url": "/stores/gn-math/274.html" },
+        { "name": "CircloO 2", "img": "/img/275.png", "url": "/stores/gn-math/275.html" },
+        { "name": "Drift Boss", "img": "/img/276.png", "url": "/stores/gn-math/276.html" },
+        { "name": "Evil Glitch", "img": "/img/277.png", "url": "/stores/gn-math/277.html" },
+        { "name": "Madalin Stunt Cars 2", "img": "/img/278.png", "url": "/stores/gn-math/278.html" },
+        { "name": "Madalin Stunt Cars 3", "img": "/img/279.png", "url": "/stores/gn-math/279.html" },
+        { "name": "Papery Planes", "img": "/img/280.png", "url": "/stores/gn-math/280.html" },
+        { "name": "Pixel Gun Survival", "img": "/img/281.png", "url": "/stores/gn-math/281.html" },
+        { "name": "Protektor", "img": "/img/282.png", "url": "/stores/gn-math/282.html" },
+        { "name": "Rooftop Snipers", "img": "/img/283.png", "url": "/stores/gn-math/283.html" },
+        { "name": "Basket Bros", "img": "/img/285.png", "url": "/stores/gn-math/285.html" },
+        { "name": "Endoparasitic", "img": "/img/286.png", "url": "/stores/gn-math/286.html" },
+        { "name": "Riddle School", "img": "/img/287.png", "url": "/stores/gn-math/287.html" },
+        { "name": "Riddle School 2", "img": "/img/288.png", "url": "/stores/gn-math/288.html" },
+        { "name": "Riddle School 3", "img": "/img/289.png", "url": "/stores/gn-math/289.html" },
+        { "name": "Riddle School 4", "img": "/img/290.png", "url": "/stores/gn-math/290.html" },
+        { "name": "Riddle School 5", "img": "/img/291.png", "url": "/stores/gn-math/291.html" },
+        { "name": "Riddle Transfer", "img": "/img/292.png", "url": "/stores/gn-math/292.html" },
+        { "name": "Riddle Transfer 2", "img": "/img/293.png", "url": "/stores/gn-math/293.html" },
+        { "name": "Idle Dice", "img": "/img/294.png", "url": "/stores/gn-math/294.html" },
+        { "name": "Play!.js", "img": "/img/296.png", "url": "/stores/gn-math/296.html" },
+        { "name": "Minecraft 1.5.2", "img": "/img/297.png", "url": "/stores/gn-math/297.html" },
+        { "name": "Minecraft Alpha 1.2.6", "img": "/img/298.png", "url": "/stores/gn-math/298.html" },
+        { "name": "Minecraft Beta 1.7.3", "img": "/img/300.png", "url": "/stores/gn-math/300.html" },
+        { "name": "Minecraft Indev", "img": "/img/301.png", "url": "/stores/gn-math/301.html" },
+        { "name": "Little Runmo", "img": "/img/302.png", "url": "/stores/gn-math/302.html" },
+        { "name": "Territorial.io", "img": "/img/303.png", "url": "https://territorial.io" },
+        { "name": "Alien Hominid", "img": "/img/304.png", "url": "/stores/gn-math/304.html" },
+        { "name": "Tanuki Sunset", "img": "/img/305.png", "url": "/stores/gn-math/305.html" },
+        { "name": "Shipo.io", "img": "/img/306.png", "url": "/stores/gn-math/306.html" },
+        { "name": "Rainbow Obby", "img": "/img/307.png", "url": "/stores/gn-math/307.html" },
+        { "name": "Nazi Zombies: Portable", "img": "/img/308.png", "url": "/stores/gn-math/308.html" },
+        { "name": "Sandboxels", "img": "/img/309.png", "url": "/stores/gn-math/309.html" },
+        { "name": "Dreadhead Parkour", "img": "/img/310.png", "url": "/stores/gn-math/310.html" },
+        { "name": "Sandtris", "img": "/img/311.png", "url": "/stores/gn-math/311.html" },
+        { "name": "BlackJack", "img": "/img/312.png", "url": "/stores/gn-math/312.html" },
+        { "name": "Minesweeper Mania", "img": "/img/313.png", "url": "/stores/gn-math/313.html" },
+        { "name": "Super Mario 63", "img": "/img/314.png", "url": "/stores/gn-math/314.html" },
+        { "name": "Jelly Mario", "img": "/img/315.png", "url": "/stores/gn-math/315.html" },
+        { "name": "Angry Birds Chrome", "img": "/img/316.png", "url": "/stores/gn-math/316.html" },
+        { "name": "sandspiel", "img": "/img/317.png", "url": "/stores/gn-math/317.html" },
+        { "name": "3D Bowling", "img": "/img/320.png", "url": "/stores/gn-math/320.html" },
+        { "name": "Sushi Roll", "img": "/img/322.png", "url": "/stores/gn-math/322.html" },
+        { "name": "Find the Alien", "img": "/img/323.png", "url": "/stores/gn-math/323.html" },
+        { "name": "Maze Speedrun", "img": "/img/324.png", "url": "/stores/gn-math/324.html" },
+        { "name": "Kitchen Bazar", "img": "/img/325.png", "url": "/stores/gn-math/325.html" },
+        { "name": "Pokey Ball", "img": "/img/326.png", "url": "/stores/gn-math/326.html" },
+        { "name": "Om Nom Run", "img": "/img/328.png", "url": "/stores/gn-math/328.html" },
+        { "name": "TileTopia", "img": "/img/329.png", "url": "/stores/gn-math/329.html" },
+        { "name": "BitPlanes", "img": "/img/330.png", "url": "/stores/gn-math/330.html" },
+        { "name": "Crazy Cars", "img": "/img/331.png", "url": "/stores/gn-math/331.html" },
+        { "name": "Going Balls", "img": "/img/332.png", "url": "/stores/gn-math/332.html" },
+        { "name": "Fancy Pants Adventure", "img": "/img/333.png", "url": "/stores/gn-math/333.html" },
+        { "name": "Fancy Pants Adventure 2", "img": "/img/334.png", "url": "/stores/gn-math/334.html" },
+        { "name": "Fancy Pants Adventure 3", "img": "/img/335.png", "url": "/stores/gn-math/335.html" },
+        { "name": "Fancy Pants Adventure 4 Part 1", "img": "/img/336.png", "url": "/stores/gn-math/336.html" },
+        { "name": "Fancy Pants Adventure 4 Part 2", "img": "/img/337.png", "url": "/stores/gn-math/337.html" },
+        { "name": "Learn to Fly", "img": "/img/340.png", "url": "/stores/gn-math/340.html" },
+        { "name": "Learn to Fly 2", "img": "/img/341.png", "url": "/stores/gn-math/341.html" },
+        { "name": "Learn to Fly 3", "img": "/img/342.png", "url": "/stores/gn-math/342.html" },
+        { "name": "Learn to Fly Idle", "img": "/img/343.png", "url": "/stores/gn-math/343.html" },
+        { "name": "Raft Wars", "img": "/img/344.png", "url": "/stores/gn-math/344.html" },
+        { "name": "Raft Wars 2", "img": "/img/345.png", "url": "/stores/gn-math/345.html" },
+        { "name": "Sort the Court", "img": "/img/346.png", "url": "/stores/gn-math/346.html" },
+        { "name": "SpiderDoll", "img": "/img/347.png", "url": "/stores/gn-math/347.html" },
+        { "name": "They Are Coming", "img": "/img/348.png", "url": "/stores/gn-math/348.html" },
+        { "name": "Spiral Roll", "img": "/img/349.png", "url": "/stores/gn-math/349.html" },
+        { "name": "Happy Sheepies", "img": "/img/351.png", "url": "/stores/gn-math/351.html" },
+        { "name": "Blumgi Rocket", "img": "/img/353.png", "url": "/stores/gn-math/353.html" },
+        { "name": "Dadish 2", "img": "/img/355.png", "url": "/stores/gn-math/355.html" },
+        { "name": "Dadish 3", "img": "/img/356.png", "url": "/stores/gn-math/356.html" },
+        { "name": "Dadish", "img": "/img/357.png", "url": "/stores/gn-math/357.html" },
+        { "name": "Dadish 3D", "img": "/img/358.png", "url": "/stores/gn-math/358.html" },
+        { "name": "Daily Dadish", "img": "/img/359.png", "url": "/stores/gn-math/359.html" },
+        { "name": "EvoWars.io", "img": "/img/360.png", "url": "/stores/gn-math/360.html" },
+        { "name": "Google Feud", "img": "/img/361.png", "url": "/stores/gn-math/361.html" },
+        { "name": "Idle Breakout", "img": "/img/362.png", "url": "/stores/gn-math/362.html" },
+        { "name": "Idle Lumber Inc", "img": "/img/363.png", "url": "/stores/gn-math/363.html" },
+        { "name": "Idle Mining Empire", "img": "/img/364.png", "url": "/stores/gn-math/364.html" },
+        { "name": "JustFall.lol", "img": "/img/365.png", "url": "/stores/gn-math/365.html" },
+        { "name": "Merge Harvest", "img": "/img/366.png", "url": "/stores/gn-math/366.html" },
+        { "name": "Parking Fury 3D", "img": "/img/367.png", "url": "/stores/gn-math/367.html" },
+        { "name": "Slope 2", "img": "/img/368.png", "url": "/stores/gn-math/368.html" },
+        { "name": "Slowroads", "img": "/img/369.png", "url": "/stores/gn-math/369.html" },
+        { "name": "Smash Karts", "img": "/img/370.png", "url": "/stores/gn-math/370.html" },
+        { "name": "Stickman Fight Ragdoll", "img": "/img/371.png", "url": "/stores/gn-math/371.html" },
+        { "name": "Stickman Boost", "img": "/img/372.png", "url": "/stores/gn-math/372.html" },
+        { "name": "Stickman Climb", "img": "/img/373.png", "url": "/stores/gn-math/373.html" },
+        { "name": "Stickman Golf", "img": "/img/374.png", "url": "/stores/gn-math/374.html" },
+        { "name": "2048 Merge Run", "img": "/img/375.png", "url": "/stores/gn-math/375.html" },
+        { "name": "Camouflage and Sniper", "img": "/img/378.png", "url": "/stores/gn-math/378.html" },
+        { "name": "Car Survival 3D", "img": "/img/379.png", "url": "/stores/gn-math/379.html" },
+        { "name": "Crush Cars 3D", "img": "/img/383.png", "url": "/stores/gn-math/383.html" },
+        { "name": "Destroy The Car 3D", "img": "/img/385.png", "url": "/stores/gn-math/385.html" },
+        { "name": "Diamond Seeker", "img": "/img/386.png", "url": "/stores/gn-math/386.html" },
+        { "name": "Draw Joust", "img": "/img/387.png", "url": "/stores/gn-math/387.html" },
+        { "name": "Evolving Bombs 3D", "img": "/img/388.png", "url": "/stores/gn-math/388.html" },
+        { "name": "Flick Goal", "img": "/img/391.png", "url": "/stores/gn-math/391.html" },
+        { "name": "Flip Master", "img": "/img/392.png", "url": "/stores/gn-math/392.html" },
+        { "name": "Giant Wanted", "img": "/img/393.png", "url": "/stores/gn-math/393.html" },
+        { "name": "Gun Clone", "img": "/img/394.png", "url": "/stores/gn-math/394.html" },
+        { "name": "Kaji Run", "img": "/img/396.png", "url": "/stores/gn-math/396.html" },
+        { "name": "Make a SuperBoat", "img": "/img/397.png", "url": "/stores/gn-math/397.html" },
+        { "name": "Makeover Run", "img": "/img/398.png", "url": "/stores/gn-math/398.html" },
+        { "name": "Mega Car Jumps", "img": "/img/399.png", "url": "/stores/gn-math/399.html" },
+        { "name": "Money Rush", "img": "/img/400.png", "url": "/stores/gn-math/400.html" },
+        { "name": "Monster Box 3D", "img": "/img/401.png", "url": "/stores/gn-math/401.html" },
+        { "name": "Robot Invasion", "img": "/img/403.png", "url": "/stores/gn-math/403.html" },
+        { "name": "Seat Jam 3D", "img": "/img/404.png", "url": "/stores/gn-math/404.html" },
+        { "name": "Shooting Master", "img": "/img/405.png", "url": "/stores/gn-math/405.html" },
+        { "name": "Supermarket 3D", "img": "/img/406.png", "url": "/stores/gn-math/406.html" },
+        { "name": "Survive to Victory", "img": "/img/407.png", "url": "/stores/gn-math/407.html" },
+        { "name": "Telekinesis Attack", "img": "/img/408.png", "url": "/stores/gn-math/408.html" },
+        { "name": "Telekinesis Car", "img": "/img/409.png", "url": "/stores/gn-math/409.html" },
+        { "name": "Telekinesis Drive", "img": "/img/410.png", "url": "/stores/gn-math/410.html" },
+        { "name": "Telekinesis", "img": "/img/411.png", "url": "/stores/gn-math/411.html" },
+        { "name": "Triple Match 3D", "img": "/img/412.png", "url": "/stores/gn-math/412.html" },
+        { "name": "Tug of War with Cars", "img": "/img/413.png", "url": "/stores/gn-math/413.html" },
+        { "name": "Twerk Race 3D", "img": "/img/414.png", "url": "/stores/gn-math/414.html" },
+        { "name": "Twisted Rope 3D", "img": "/img/415.png", "url": "/stores/gn-math/415.html" },
+        { "name": "Wall Crawler", "img": "/img/416.png", "url": "/stores/gn-math/416.html" },
+        { "name": "War Regions", "img": "/img/417.png", "url": "/stores/gn-math/417.html" },
+        { "name": "Weapon Craft Run", "img": "/img/418.png", "url": "/stores/gn-math/418.html" },
+        { "name": "Weapon Upgrade Rush", "img": "/img/419.png", "url": "/stores/gn-math/419.html" },
+        { "name": "Weapon Scale", "img": "/img/420.png", "url": "/stores/gn-math/420.html" },
+        { "name": "High Heels", "img": "/img/422.png", "url": "/stores/gn-math/422.html" },
+        { "name": "WebFishing", "img": "/img/423.png", "url": "/stores/gn-math/423.html" },
+        { "name": "Andy's Apple Farm", "img": "/img/426.png", "url": "/stores/gn-math/426.html" },
+        { "name": "OMORI", "img": "/img/427.png", "url": "/stores/gn-math/427.html" },
+        { "name": "Five Nights at Freddy's 4: Halloween", "img": "/img/428.png", "url": "/stores/gn-math/428.html" },
+        { "name": "Code Editor", "img": "/img/429.png", "url": "/stores/gn-math/429.html" },
+        { "name": "10 Minutes Till Dawn", "img": "/img/430.png", "url": "/stores/gn-math/430.html" },
+        { "name": "Yume Nikki", "img": "/img/433.png", "url": "/stores/gn-math/433.html" },
+        { "name": "God's Flesh", "img": "/img/434.png", "url": "/stores/gn-math/434.html" },
+        { "name": "Bouncemasters", "img": "/img/437.png", "url": "/stores/gn-math/437.html" },
+        { "name": "Kitty Toy", "img": "/img/441.png", "url": "/stores/gn-math/441.html" },
+        { "name": "Adventure Drivers", "img": "/img/443.png", "url": "/stores/gn-math/443.html" },
+        { "name": "Ages of Conflict", "img": "/img/444.png", "url": "/stores/gn-math/444.html" },
+        { "name": "Kindergarten", "img": "/img/445.png", "url": "/stores/gn-math/445.html" },
+        { "name": "Kindergarten 2", "img": "/img/446.png", "url": "/stores/gn-math/446.html" },
+        { "name": "Slender: The 8 Pages", "img": "/img/451.png", "url": "/stores/gn-math/451.html" },
+        { "name": "BLOODMONEY!", "img": "/img/454.png", "url": "/stores/gn-math/454.html" },
+        { "name": "Undertale Yellow", "img": "/img/456.png", "url": "/stores/gn-math/456.html" },
+        { "name": "Raft", "img": "/img/457.png", "url": "/stores/gn-math/457.html" },
+        { "name": "The Deadseat", "img": "/img/458.png", "url": "/stores/gn-math/458.html" },
+        { "name": "The Man In The Window", "img": "/img/459.png", "url": "/stores/gn-math/459.html" },
+        { "name": "Fears to Fathom: Home Alone", "img": "/img/460.png", "url": "/stores/gn-math/460.html" },
+        { "name": "Slither.io", "img": "/img/461.png", "url": "/stores/gn-math/461.html" },
+        { "name": "DEAD PLATE", "img": "/img/462.png", "url": "/stores/gn-math/462.html" },
+        { "name": "Cuphead", "img": "/img/465.png", "url": "/stores/gn-math/465.html" },
+        { "name": "sandstone", "img": "/img/469.png", "url": "/stores/gn-math/469.html" },
+        { "name": "Doodle Jump", "img": "/img/470.png", "url": "/stores/gn-math/470.html" },
+        { "name": "Bad Time Simulator", "img": "/img/472.png", "url": "/stores/gn-math/472.html" },
+        { "name": "Spacebar Clicker", "img": "/img/473.png", "url": "/stores/gn-math/473.html" },
+        { "name": "Steal A Brainrot", "img": "/img/479.png", "url": "/stores/gn-math/479.html" },
+        { "name": "Hollow Knight", "img": "/img/468.png", "url": "/stores/gn-math/622.html" }
+    ];
+
+    function renderGames(filterText) {
+        const container = document.getElementById('gamesGrid');
+        const counterSpan = document.getElementById('counterDisplay');
+        const lowerFilter = filterText.toLowerCase();
+
+        let filtered = gamesData;
+        if (lowerFilter) {
+            filtered = gamesData.filter(function(game) {
+                return game.name.toLowerCase().includes(lowerFilter);
+            });
+        }
+
+        counterSpan.innerText = filtered.length + ' / ' + gamesData.length + ' games';
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="no-results">No games found</div>';
+            return;
+        }
+
+        let html = '';
+        for (let i = 0; i < filtered.length; i++) {
+            const game = filtered[i];
+            html += '<div class="game-card">';
+            html += '<div class="game-image">';
+            html += '<img src="' + game.img + '" alt="' + escapeHtml(game.name) + '" loading="lazy" onerror="this.src=\'/img/placeholder.png\'">';
+            html += '</div>';
+            html += '<a href="' + game.url + '" class="game-link" target="_top">' + escapeHtml(game.name) + '</a>';
+            html += '</div>';
+        }
+        container.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    let debounceTimer;
+    searchInput.addEventListener('input', function(e) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() {
+            renderGames(e.target.value);
+        }, 200);
+    });
+
+    renderGames('');
+</script>
+</body>
+</html>
