@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-us">
+ 
+<head>
+    <base href="https://rawcdn.githack.com/selenite-cc/selenite-old/9c743188888af0986c8c7b293dbac8f9e421a4ee/adventure-capitalist/">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | AdVenture Capitalist!</title>
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="TemplateData/UnityProgress.js"></script>
+    <script src="/js/all.js"></script>
+
+  <script src="https://pl28729284.effectivecpmnetwork.com/e3/ae/fb/e3aefbb699fcb7ed39a8fa8884c521d5.js"></script>
+</head>
+ 
+<body class="template">
+
+  <div id="interstitialOverlay">
+    <div id="interstitialBox">
+      <div id="container-9e9f96078bb02b26ee2271127f64a418"></div>
+      <script async="async" data-cfasync="false"
+        src="//pl29480014.effectivecpmnetwork.com/9e9f96078bb02b26ee2271127f64a418/invoke.js"></script>
+      <p id="interstitialTimer">Ad closes in <span id="countdown">5</span>s...</p>
+      <button id="interstitialClose" disabled
+        onclick="document.getElementById('interstitialOverlay').style.display='none'">Play Game</button>
+    </div>
+  </div>
+  <style>
+    #interstitialOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 99999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #interstitialBox {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    #container-9e9f96078bb02b26ee2271127f64a418 {
+      min-height: 250px;
+    }
+
+    #interstitialTimer {
+      color: #aaa;
+      font-size: 14px;
+      margin: 12px 0 8px;
+      font-family: Arial, sans-serif;
+    }
+
+    #interstitialClose {
+      padding: 10px 36px;
+      background: #fc2651;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #interstitialClose:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    (function () {
+      var sec = 5;
+      var btn = document.getElementById('interstitialClose');
+      var span = document.getElementById('countdown');
+      var iv = setInterval(function () {
+        sec--;
+        span.textContent = sec;
+        if (sec <= 0) {
+          clearInterval(iv);
+          btn.disabled = false;
+          btn.textContent = 'Play Game';
+          document.getElementById('interstitialTimer').style.display = 'none';
+        }
+      }, 1000);
+    })();
+  </script>
+
+    <div class="webgl-content">
+        <div id="unityContainer" style="width: 960px; height: 600px; padding: 0px; margin: 0px; border: 0px; position: relative; background: rgb(35, 31, 32);">
+          
+      <canvas  class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" id="canvas"width=335 height=667 style="width: 100%; height: 100%; background: #231F20"></canvas>
+      
+    <div id="loadingBox">
+        <div id="bgBar"></div>
+        <div id="progressBar"></div>
+        <p id="loadingInfo">Loading...</p>
+    </div>
+    <script type='text/javascript'>
+        // connect to canvas
+        var Module = {
+            TOTAL_MEMORY: 201326592,
+            filePackagePrefixURL: "Release/",
+            memoryInitializerPrefixURL: "Release/",
+            preRun: [],
+            postRun: [],
+            print: (function() {
+                return function(text) {
+                    console.log(text);
+                };
+            })(),
+            printErr: function(text) {
+                console.error(text);
+            },
+            canvas: document.getElementById('canvas'),
+            progress: null,
+            setStatus: function(text) {
+                if (this.progress == null) {
+                    if (typeof UnityProgress != 'function')
+                        return;
+                    this.progress = new UnityProgress(canvas);
+                }
+                if (!Module.setStatus.last) Module.setStatus.last = {
+                    time: Date.now(),
+                    text: ''
+                };
+                if (text === Module.setStatus.text) return;
+                this.progress.SetMessage(text);
+                var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+                if (m)
+                    this.progress.SetProgress(parseInt(m[2]) / parseInt(m[4]));
+                if (text === "")
+                    this.progress.Clear()
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function(left) {
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+            }
+        };
+        Module.setStatus('Downloading (0.0/1)');
+    </script>
+    <script src="Release/UnityConfig.js"></script>
+    <script src="Release/fileloader.js"></script>
+    <script>
+        if (!(!Math.fround)) {
+            var script = document.createElement('script');
+            script.src = "Release/webgl.js";
+            document.body.appendChild(script);
+        } else {
+            var codeXHR = new XMLHttpRequest();
+            codeXHR.open('GET', 'Release/webgl.js', true);
+            codeXHR.onload = function() {
+                var code = codeXHR.responseText;
+                if (!Math.fround) {
+                    try {
+                        console.log('optimizing out Math.fround calls');
+                        var m = /var ([^=]+)=global\.Math\.fround;/.exec(code);
+                        var minified = m[1];
+                        if (!minified) throw 'fail';
+                        var startAsm = code.indexOf('// EMSCRIPTEN_START_FUNCS');
+                        var endAsm = code.indexOf('// EMSCRIPTEN_END_FUNCS');
+                        var asm = code.substring(startAsm, endAsm);
+                        do {
+                            var moar = false; // we need to re-do, as x(x( will not be fixed
+                            asm = asm.replace(new RegExp('[^a-zA-Z0-9\\$\\_]' + minified + '\\(', 'g'), function(s) {
+                                moar = true;
+                                return s[0] + '('
+                            });
+                        } while (moar);
+                        code = code.substring(0, startAsm) + asm + code.substring(endAsm);
+                        code = code.replace("'use asm'", "'almost asm'");
+                    } catch (e) {
+                        console.log('failed to optimize out Math.fround calls ' + e)
+                    }
+                }
+                var blob = new Blob([code], {
+                    type: 'text/javascript'
+                });
+                codeXHR = null;
+                var src = URL.createObjectURL(blob);
+                var script = document.createElement('script');
+                script.src = URL.createObjectURL(blob);
+                script.onload = function() {
+                    URL.revokeObjectURL(script.src);
+                };
+                document.body.appendChild(script);
+            };
+            codeXHR.send(null);
+        }
+    </script>
+</body>
+ 
+</html>

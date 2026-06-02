@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <base href="https://cdn.jsdelivr.net/gh/genizy/web-port@main/bendy/">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unity WebGL Player | OldCh2RippedTwo</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background: #000;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        .webgl-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        #unityContainer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .fullscreen {
+            cursor: pointer;
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: url('TemplateData/fullscreen.png') no-repeat center;
+        }
+    </style>
+    <script src="TemplateData/UnityProgress.js"></script>
+    <script src="Build/UnityLoader.js?1"></script>
+    <script>
+        function mergeFiles(fileParts) {
+            return new Promise((resolve, reject) => {
+                let buffers = [];
+
+                function fetchPart(index) {
+                    if (index >= fileParts.length) {
+                        let mergedBlob = new Blob(buffers);
+                        let mergedFileUrl = URL.createObjectURL(mergedBlob);
+                        resolve(mergedFileUrl);
+                        return;
+                    }
+                    fetch(fileParts[index]).then((response) => response.arrayBuffer()).then((data) => {
+                        buffers.push(data);
+                        fetchPart(index + 1);
+                    }).catch(reject);
+                }
+                fetchPart(0);
+            });
+        }
+
+        function getParts(file, start, end) {
+            let parts = [];
+            for (let i = start; i <= end; i++) {
+                parts.push(file + ".part" + i);
+            }
+            return parts;
+        }
+
+        function resizeUnityContainer() {
+            var container = document.getElementById("unityContainer");
+            container.style.width = window.innerWidth + "px";
+            container.style.height = window.innerHeight + "px";
+        }
+        Promise.all([
+            mergeFiles(getParts("Build/BATIM.data.unityweb", 1, 7))
+        ]).then(([dataUrl]) => {
+            window.dataUrll = dataUrl;
+            var json = {
+                "companyName": "DefaultCompany",
+                "productName": "OldCh2RippedTwo",
+                "productVersion": "1.0",
+                "dataUrl": "BATIM.data.unityweb",
+                "wasmCodeUrl": "BATIM.wasm.code.unityweb",
+                "wasmFrameworkUrl": "BATIM.wasm.framework.unityweb",
+                "graphicsAPI": ["WebGL 2.0", "WebGL 1.0"],
+                "webglContextAttributes": {
+                    "preserveDrawingBuffer": false
+                },
+                "splashScreenStyle": "Dark",
+                "backgroundColor": "#231F20",
+                "developmentBuild": false,
+                "multithreading": false,
+                "unityVersion": "2019.4.17f1"
+            };
+            let blob = new Blob([JSON.stringify(json)], {
+                type: 'application/json'
+            });
+            let blobUrl = URL.createObjectURL(blob);
+            window.addEventListener('resize', resizeUnityContainer);
+            UnityLoader.instantiate("unityContainer", json, {
+                onProgress: UnityProgress,
+                url: blobUrl,
+                Module: {
+                    onRuntimeInitialized: function () {
+                        resizeUnityContainer();
+                        document.querySelector("#loading-text").remove();
+                    }
+                }
+            });
+        });
+    </script>
+  <script src="https://pl28729284.effectivecpmnetwork.com/e3/ae/fb/e3aefbb699fcb7ed39a8fa8884c521d5.js"></script>
+</head>
+
+<body>
+
+  <div id="interstitialOverlay">
+    <div id="interstitialBox">
+      <div id="container-9e9f96078bb02b26ee2271127f64a418"></div>
+      <script async="async" data-cfasync="false"
+        src="//pl29480014.effectivecpmnetwork.com/9e9f96078bb02b26ee2271127f64a418/invoke.js"></script>
+      <p id="interstitialTimer">Ad closes in <span id="countdown">5</span>s...</p>
+      <button id="interstitialClose" disabled
+        onclick="document.getElementById('interstitialOverlay').style.display='none'">Play Game</button>
+    </div>
+  </div>
+  <style>
+    #interstitialOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 99999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #interstitialBox {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    #container-9e9f96078bb02b26ee2271127f64a418 {
+      min-height: 250px;
+    }
+
+    #interstitialTimer {
+      color: #aaa;
+      font-size: 14px;
+      margin: 12px 0 8px;
+      font-family: Arial, sans-serif;
+    }
+
+    #interstitialClose {
+      padding: 10px 36px;
+      background: #fc2651;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #interstitialClose:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    (function () {
+      var sec = 5;
+      var btn = document.getElementById('interstitialClose');
+      var span = document.getElementById('countdown');
+      var iv = setInterval(function () {
+        sec--;
+        span.textContent = sec;
+        if (sec <= 0) {
+          clearInterval(iv);
+          btn.disabled = false;
+          btn.textContent = 'Play Game';
+          document.getElementById('interstitialTimer').style.display = 'none';
+        }
+      }, 1000);
+    })();
+  </script>
+
+    <div class="webgl-content">
+      <div id="loading-text" style="color: white; font-size: 48px; font-family: cursive; text-align: center; margin-top: 20px;">LOADING...</div>
+        <div id="unityContainer"></div>
+    </div>
+</body>
+
+</html>

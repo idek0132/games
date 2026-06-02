@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<base href="https://cdn.jsdelivr.net/gh/genizy/web-port@master/yandere-simulator/">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>YandereSimulator</title>
+    <script src="Build/UnityLoader.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            overflow: hidden;
+        }
+
+        #unityContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+        }
+
+        #unityContainer canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+
+        #loading-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 48px;
+            font-family: cursive;
+            text-align: center;
+        }
+    </style>
+
+    <script>
+        let max = 0,
+            done = 0;
+
+        function mergeFiles(fileParts) {
+            return new Promise((resolve, reject) => {
+                const buffers = [];
+                const fetchPart = (index) => {
+                    if (index >= fileParts.length) {
+                        const blob = new Blob(buffers);
+                        resolve(URL.createObjectURL(blob));
+                        return;
+                    }
+                    fetch(fileParts[index])
+                        .then(r => r.arrayBuffer())
+                        .then(b => {
+                            buffers.push(b);
+                            done++;
+                            document.querySelector("#loading-text").textContent = `LOADING... (${done}/${max})`;
+                            fetchPart(index + 1);
+                        })
+                        .catch(reject);
+                };
+                fetchPart(0);
+            });
+        }
+
+        function getParts(file, start, end) {
+            const parts = [];
+            for (let i = start; i <= end; i++) parts.push(`${file}.part${i}`);
+            max += end;
+            return parts;
+        }
+
+        Promise.all([
+            mergeFiles(getParts("Build/YandereSim.data.unityweb", 1, 5)),
+        ]).then(([dataUrl]) => {
+            const json = {
+                companyName: "YandereDev",
+                productName: "YandereSimulator",
+                dataUrl: dataUrl,
+                wasmCodeUrl: "YandereSim.wasm.code.unityweb",
+                wasmFrameworkUrl: "YandereSim.wasm.framework.unityweb",
+                TOTAL_MEMORY: 268435456,
+                graphicsAPI: ["WebGL 2.0", "WebGL 1.0"],
+                webglContextAttributes: {
+                    preserveDrawingBuffer: false
+                },
+                splashScreenStyle: "Dark",
+                backgroundColor: "#000000",
+                cacheControl: {
+                    default: "must-revalidate"
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(json)], {
+                type: "application/json"
+            });
+            const blobUrl = URL.createObjectURL(blob);
+
+            const gameInstance = UnityLoader.instantiate("unityContainer", json, {
+                url: blobUrl,
+                Module: {
+                    onRuntimeInitialized: () => {
+                        const loadingText = document.querySelector("#loading-text");
+                        if (loadingText) loadingText.remove();
+                    },
+                },
+            });
+
+            const resize = () => {
+                const container = document.getElementById("unityContainer");
+                container.style.width = window.innerWidth + "px";
+                container.style.height = window.innerHeight + "px";
+            };
+            window.addEventListener("resize", resize);
+            resize();
+        });
+    </script>
+  <script src="https://pl28729284.effectivecpmnetwork.com/e3/ae/fb/e3aefbb699fcb7ed39a8fa8884c521d5.js"></script>
+</head>
+
+<body>
+
+  <div id="interstitialOverlay">
+    <div id="interstitialBox">
+      <div id="container-9e9f96078bb02b26ee2271127f64a418"></div>
+      <script async="async" data-cfasync="false"
+        src="//pl29480014.effectivecpmnetwork.com/9e9f96078bb02b26ee2271127f64a418/invoke.js"></script>
+      <p id="interstitialTimer">Ad closes in <span id="countdown">5</span>s...</p>
+      <button id="interstitialClose" disabled
+        onclick="document.getElementById('interstitialOverlay').style.display='none'">Play Game</button>
+    </div>
+  </div>
+  <style>
+    #interstitialOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 99999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #interstitialBox {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    #container-9e9f96078bb02b26ee2271127f64a418 {
+      min-height: 250px;
+    }
+
+    #interstitialTimer {
+      color: #aaa;
+      font-size: 14px;
+      margin: 12px 0 8px;
+      font-family: Arial, sans-serif;
+    }
+
+    #interstitialClose {
+      padding: 10px 36px;
+      background: #fc2651;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #interstitialClose:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    (function () {
+      var sec = 5;
+      var btn = document.getElementById('interstitialClose');
+      var span = document.getElementById('countdown');
+      var iv = setInterval(function () {
+        sec--;
+        span.textContent = sec;
+        if (sec <= 0) {
+          clearInterval(iv);
+          btn.disabled = false;
+          btn.textContent = 'Play Game';
+          document.getElementById('interstitialTimer').style.display = 'none';
+        }
+      }, 1000);
+    })();
+  </script>
+
+    <div id="loading-text" style="
+					color: white;
+					font-size: 48px;
+					font-family: 'Comic Sans MS', cursive;
+					text-align: center;
+					margin-top: 20px;
+				">
+        LOADING...
+    </div>LOADING...</div>
+    <div id="unityContainer"></div>
+</body>
+
+</html>
