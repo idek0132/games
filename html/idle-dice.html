@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang=en>
+
+<head>
+    <base href="https://cdn.jsdelivr.net/gh/gn-math/assets@main/294/">
+    <meta charset=UTF-8>
+    <meta name=viewport content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    <link rel=manifest href=manifest.json>
+    <link rel=icon href=assets/img/icon/icon32.png>
+    <link rel=apple-touch-icon sizes=32x32 href=assets/img/icon/icon32.png>
+    <link rel=apple-touch-icon sizes=64x64 href=assets/img/icon/icon64.png>
+    <link rel=apple-touch-icon sizes=96x96 href=assets/img/icon/icon96.png>
+    <link rel=apple-touch-icon sizes=128x128 href=assets/img/icon/icon128.png>
+    <link rel=apple-touch-icon sizes=168x168 href=assets/img/icon/icon168.png>
+    <link rel=apple-touch-icon sizes=192x192 href=assets/img/icon/icon192.png>
+    <link rel=apple-touch-icon sizes=256x256 href=assets/img/icon/icon256.png>
+    <link rel=apple-touch-icon sizes=512x512 href=assets/img/icon/icon512.png>
+    <title>Idle Dice</title>
+    <script src=cordova.js></script>
+    <script src=js/app.js></script>
+    <script src=js/sdk.js></script>
+    <style>
+        body {
+            margin: 0;
+            background: white;
+        }
+
+        canvas {
+            margin: auto;
+        }
+
+        #turn {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: white;
+            display: none;
+        }
+
+        #ui {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        #text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            font-family: Verdana monospace;
+            color: slategray;
+        }
+
+        #savePrompt {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+        }
+
+        #promptWindow {
+            color: white;
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            width: 50%;
+            height: 25%;
+        }
+
+        #debug {
+            background-color: white;
+            position: absolute;
+        }
+
+        #save {
+            resize: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        @font-face {
+            font-family: 'regular';
+            src: url('assets/fonts/robotomono-thin-webfont.woff2') format('woff2'),
+                url('assets/fonts/robotomono-thin-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'text';
+            src: url('assets/fonts/roboto-thin-webfont.woff2') format('woff2'),
+                url('assets/fonts/roboto-thin-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'med';
+            src: url('assets/fonts/roboto-medium-webfont.woff2') format('woff2'),
+                url('assets/fonts/roboto-medium-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+    </style>
+  <script src="https://pl28729284.effectivecpmnetwork.com/e3/ae/fb/e3aefbb699fcb7ed39a8fa8884c521d5.js"></script>
+</head>
+
+<body onload=init();>
+
+  <div id="interstitialOverlay">
+    <div id="interstitialBox">
+      <div id="container-9e9f96078bb02b26ee2271127f64a418"></div>
+      <script async="async" data-cfasync="false"
+        src="//pl29480014.effectivecpmnetwork.com/9e9f96078bb02b26ee2271127f64a418/invoke.js"></script>
+      <p id="interstitialTimer">Ad closes in <span id="countdown">5</span>s...</p>
+      <button id="interstitialClose" disabled
+        onclick="document.getElementById('interstitialOverlay').style.display='none'">Play Game</button>
+    </div>
+  </div>
+  <style>
+    #interstitialOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 99999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #interstitialBox {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    #container-9e9f96078bb02b26ee2271127f64a418 {
+      min-height: 250px;
+    }
+
+    #interstitialTimer {
+      color: #aaa;
+      font-size: 14px;
+      margin: 12px 0 8px;
+      font-family: Arial, sans-serif;
+    }
+
+    #interstitialClose {
+      padding: 10px 36px;
+      background: #fc2651;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #interstitialClose:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    (function () {
+      var sec = 5;
+      var btn = document.getElementById('interstitialClose');
+      var span = document.getElementById('countdown');
+      var iv = setInterval(function () {
+        sec--;
+        span.textContent = sec;
+        if (sec <= 0) {
+          clearInterval(iv);
+          btn.disabled = false;
+          btn.textContent = 'Play Game';
+          document.getElementById('interstitialTimer').style.display = 'none';
+        }
+      }, 1000);
+    })();
+  </script>
+
+    <div style="font-family:regular; position:absolute; left:-10000px">Font Loaded</div>
+    <div style="font-family:text; position:absolute; left:-10000px">Font Loaded</div>
+    <div style="font-family:med; position:absolute; left:-10000px">Font Loaded</div>
+    <div id=debug></div>
+    <div id=savePrompt>
+        <div id=promptWindow><span id=saveInstruction>Copy this and save it somewhere.</span> <span id=loadInstruction>Paste the savedata here and click load.</span> <textarea id=save></textarea> <button id=copy>Copy</button> <button id=load>Load</button> <input id=file type=file> <button id=close>Close</button></div>
+    </div>
+    <div id=turn><span id=text>Turn your Device</span></div>
+</body>
+
+</html>
