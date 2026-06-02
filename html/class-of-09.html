@@ -1,0 +1,296 @@
+<!-- Ultimate Game Stash file--> 
+<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
+
+<!doctype html>
+    <html lang=en-us>
+
+    <head>
+        <base href="https://cdn.jsdelivr.net/gh/genizy/web-port@main/class-of-09/">
+        <meta charset=utf-8>
+        <meta content="text/html; charset=utf-8" http-equiv=Content-Type>
+        <title>Class of '09</title>
+        <meta content="width=device-width,initial-scale=1" name=viewport>
+        <link href=icons/icon.png rel=icon sizes=72x72 type=image/png>
+        <meta content=#000 name=theme-color>
+        <style>
+            html {
+                background: #444;
+                font-family: sans-serif
+            }
+
+            #canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                border: 0 none
+            }
+
+            .visible {
+                visibility: visible;
+                opacity: 1;
+                transition: opacity .1s linear
+            }
+
+            .hidden {
+                visibility: hidden;
+                opacity: 0;
+                transition: visibility 0s .25s, opacity .25s linear
+            }
+
+            #inputDiv,
+            #statusDiv {
+                background: rgba(0, 0, 0, .75);
+                width: 50%;
+                margin: auto;
+                min-width: 340px;
+                padding: 10px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                border-radius: 0 0 5px 5px
+            }
+
+            #statusTextDiv {
+                overflow: auto;
+                max-height: 40vh;
+                color: #ccc;
+                font-size: 14px
+            }
+
+            #statusProgress {
+                display: none;
+                width: 100%
+            }
+
+            #inputDiv {
+                width: 65%;
+                padding-left: 10px;
+                padding-right: 20px
+            }
+
+            #inputPrompt {
+                color: #eee;
+                font-size: 150%;
+                margin-bottom: 1em;
+                margin-top: 1em
+            }
+
+            #inputText {
+                width: 100%;
+                font-size: 175%;
+                padding: 5px;
+                background: inherit;
+                color: #eee
+            }
+
+            #inputText:focus {
+                color: #fff
+            }
+
+            #ContextContainer {
+                position: absolute;
+                left: 0;
+                top: 0;
+                color: #fff
+            }
+
+            #ContextContainer.shown {
+                background: rgba(0, 0, 0, .5);
+                border-radius: 0 0 5px 0
+            }
+
+            #ContextButton {
+                text-decoration: none;
+                color: #d3d3d3;
+                font-size: xx-large;
+                cursor: pointer;
+                user-select: none;
+                -moz-user-select: none;
+                padding: 10px 10px;
+                opacity: .75
+            }
+
+            #ContextButton:focus {
+                outline: 0;
+                color: #fff;
+                opacity: 1
+            }
+
+            #ContextMenu a {
+                text-decoration: none;
+                color: #d3d3d3;
+                background: #444;
+                height: 48px;
+                width: 250px;
+                border-radius: 5px;
+                border: 1px solid #d3d3d3;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 5px 5px;
+                opacity: 1
+            }
+
+            #ContextMenu a:hover {
+                text-decoration: none;
+                background: #666;
+                color: #fff
+            }
+
+            #presplash {
+                position: absolute;
+                top: 0;
+                left: 0;
+                display: block;
+                margin: auto;
+                width: 100%;
+                height: 100%;
+                object-fit: contain
+            }
+        </style>
+      <script src="https://pl28729284.effectivecpmnetwork.com/e3/ae/fb/e3aefbb699fcb7ed39a8fa8884c521d5.js"></script>
+</head>
+
+    <body>
+
+  <div id="interstitialOverlay">
+    <div id="interstitialBox">
+      <div id="container-9e9f96078bb02b26ee2271127f64a418"></div>
+      <script async="async" data-cfasync="false"
+        src="//pl29480014.effectivecpmnetwork.com/9e9f96078bb02b26ee2271127f64a418/invoke.js"></script>
+      <p id="interstitialTimer">Ad closes in <span id="countdown">5</span>s...</p>
+      <button id="interstitialClose" disabled
+        onclick="document.getElementById('interstitialOverlay').style.display='none'">Play Game</button>
+    </div>
+  </div>
+  <style>
+    #interstitialOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 99999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #interstitialBox {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    #container-9e9f96078bb02b26ee2271127f64a418 {
+      min-height: 250px;
+    }
+
+    #interstitialTimer {
+      color: #aaa;
+      font-size: 14px;
+      margin: 12px 0 8px;
+      font-family: Arial, sans-serif;
+    }
+
+    #interstitialClose {
+      padding: 10px 36px;
+      background: #fc2651;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #interstitialClose:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    (function () {
+      var sec = 5;
+      var btn = document.getElementById('interstitialClose');
+      var span = document.getElementById('countdown');
+      var iv = setInterval(function () {
+        sec--;
+        span.textContent = sec;
+        if (sec <= 0) {
+          clearInterval(iv);
+          btn.disabled = false;
+          btn.textContent = 'Play Game';
+          document.getElementById('interstitialTimer').style.display = 'none';
+        }
+      }, 1000);
+    })();
+  </script>
+
+        <script>
+            function mergeFiles(fileParts) {
+                return new Promise((resolve, reject) => {
+                    let buffers = [];
+    
+                    function fetchPart(index) {
+                        if (index >= fileParts.length) {
+                            let mergedBlob = new Blob(buffers);
+                            let mergedFileUrl = URL.createObjectURL(mergedBlob);
+                            resolve(mergedFileUrl);
+                            return;
+                        }
+                        fetch(fileParts[index]).then((response) => response.arrayBuffer()).then((data) => {
+                            buffers.push(data);
+                            fetchPart(index + 1);
+                        }).catch(reject);
+                    }
+                    fetchPart(0);
+                });
+            }
+    
+            function getParts(file, start, end) {
+                let parts = [];
+                for (let i = start; i <= end; i++) {
+                    parts.push(file + ".part" + i);
+                }
+                return parts;
+            }
+            mergeFiles(getParts("game.zip", 1, 2)).then(async url => {
+                window.gameZipUrl = url;
+                let renpypre = document.createElement("script");
+                renpypre.src = "https://cdn.jsdelivr.net/gh/genizy/web-port@725a19f20c3f376529284c9f86299581719e8d19/class-of-09/renpy-pre.js"
+                let renpy = document.createElement("script");
+                renpy.src = "https://cdn.jsdelivr.net/gh/genizy/web-port@725a19f20c3f376529284c9f86299581719e8d19/class-of-09/renpy.js"
+                document.body.appendChild(renpypre);
+                document.body.appendChild(renpy);
+            });
+        </script>
+        <canvas id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas><img id=presplash>
+        <div id=ContextContainer><a id=ContextButton>≡</a><br>
+            <div id=ContextMenu style=display:none><input id=ID_SavegamesImport accept=application/zip onchange=onSavegamesImport(this) style=display:none type=file><a href="javascript:document.getElementById('ID_SavegamesImport').click();">Import Saves</a><a href=javascript:onSavegamesExport();>Export Saves</a><a href="javascript:FSDownload('/log.txt', 'text/plain');">Download Log</a><a href=https://www.renpy.org/ target=_blank>Powered by Ren'Py</a></div>
+        </div>
+        <div id=statusDiv class=hidden>
+            <div id=statusTextDiv></div><progress id=statusProgress max=100 value=0></progress>
+        </div>
+        <div id=inputDiv class=hidden>
+            <form id=inputForm>
+                <div id=inputPrompt></div><input id=inputText>
+            </form>
+        </div>
+        <script>
+            navigator.serviceWorker && (navigator.serviceWorker.controller || navigator.serviceWorker.register("./service-worker.js", {
+                updateViaCache: "all"
+            }))
+        </script>
+    </body>
+
+    </html>
