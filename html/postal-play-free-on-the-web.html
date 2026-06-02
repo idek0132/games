@@ -1,0 +1,205 @@
+
+<html lang="en-us">
+  <head>
+  <base href="https://cdn.jsdelivr.net/gh/Stinkalistic/UGS@main/MISC/postal/">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>POSTAL: Play FREE on the web</title>
+    <meta property="og:title" content="POSTAL: Play FREE on the web" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://playpostal.com/" />
+    <meta property="og:image" content="play-postal-free.jpg" />
+    <meta property="og:image:secure_url" content="play-postal-free.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="postal logo that says play free on the web" />
+    <meta property="og:description" content="Play the original POSTAL game by Running With Scissors for FREE on this website!" />
+    <style>
+      html {background-color: black; color: red;}
+      body {margin:0; padding:0;}
+      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+      div.emscripten { text-align: center; }
+      canvas.emscripten { border: 0px none; background-color: black; }
+    </style>
+    <script src="https://pl28729284.effectivecpmnetwork.com/e3/ae/fb/e3aefbb699fcb7ed39a8fa8884c521d5.js"></script>
+</head>
+  <body>
+
+  <div id="interstitialOverlay">
+    <div id="interstitialBox">
+      <div id="container-9e9f96078bb02b26ee2271127f64a418"></div>
+      <script async="async" data-cfasync="false"
+        src="//pl29480014.effectivecpmnetwork.com/9e9f96078bb02b26ee2271127f64a418/invoke.js"></script>
+      <p id="interstitialTimer">Ad closes in <span id="countdown">5</span>s...</p>
+      <button id="interstitialClose" disabled
+        onclick="document.getElementById('interstitialOverlay').style.display='none'">Play Game</button>
+    </div>
+  </div>
+  <style>
+    #interstitialOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 99999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #interstitialBox {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    #container-9e9f96078bb02b26ee2271127f64a418 {
+      min-height: 250px;
+    }
+
+    #interstitialTimer {
+      color: #aaa;
+      font-size: 14px;
+      margin: 12px 0 8px;
+      font-family: Arial, sans-serif;
+    }
+
+    #interstitialClose {
+      padding: 10px 36px;
+      background: #fc2651;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #interstitialClose:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    (function () {
+      var sec = 5;
+      var btn = document.getElementById('interstitialClose');
+      var span = document.getElementById('countdown');
+      var iv = setInterval(function () {
+        sec--;
+        span.textContent = sec;
+        if (sec <= 0) {
+          clearInterval(iv);
+          btn.disabled = false;
+          btn.textContent = 'Play Game';
+          document.getElementById('interstitialTimer').style.display = 'none';
+        }
+      }, 1000);
+    })();
+  </script>
+
+    <figure style="overflow:visible;" id="spinner"></figure>
+    <div class="emscripten" id="status">Downloading game files...</div>
+    <div class="emscripten">
+      <progress value="0" max="100" id="progress" hidden=1></progress>  
+    </div>
+    <div class="emscripten_border">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1 onclick="requestPointerLock()"></canvas>
+    </div>
+
+    <script>
+      const statusElement = document.getElementById('status');
+      const progressElement = document.getElementById('progress');
+      const spinnerElement = document.getElementById('spinner');
+      const canvasElement = document.getElementById('canvas');
+
+      function mergeFiles(fileParts, cb) {
+        return new Promise((resolve, reject) => {
+          let buffers = [];
+          function fetchPart(index) {
+            if (index >= fileParts.length) {
+              let mergedBlob = new Blob(buffers);
+              resolve(mergedBlob);
+              return;
+            }
+            fetch(fileParts[index])
+              .then((response) => {
+                if (!response.ok) throw new Error("Failed to load " + fileParts[index]);
+                return response.arrayBuffer();
+              })
+              .then((data) => {
+                buffers.push(data);
+                cb(index + 1);
+                fetchPart(index + 1);
+              })
+              .catch(reject);
+          }
+          fetchPart(0);
+        });
+      }
+
+      function getParts(baseName, total) {
+        let parts = [];
+        for (let i = 1; i <= total; i++) {
+          parts.push(`${baseName}.part${i}`);
+        }
+        return parts;
+      }
+
+      async function prepareDataFile() {
+        const parts = getParts("index.data", 24);
+        statusElement.innerHTML = "Merging data parts (0/24)...";
+
+        const blob = await mergeFiles(parts, (loaded) => {
+          statusElement.innerHTML = `Merging data parts (${loaded}/${parts.length})...`;
+        });
+
+        const mergedFile = new File([blob], "index.data");
+        const url = URL.createObjectURL(mergedFile);
+        return url;
+      }
+
+      var Module = {
+        canvas: canvasElement,
+        setStatus(text) {
+          statusElement.textContent = text;
+        },
+        monitorRunDependencies(left) {
+          progressElement.hidden = !left;
+          if (left) {
+            progressElement.value = 100 - left * 20;
+          }
+        }
+      };
+
+      (async () => {
+        try {
+          const dataUrl = await prepareDataFile();
+          console.log("Merged index.data ready:", dataUrl);
+
+          const origFetch = window.fetch;
+          window.fetch = (input, init) => {
+            if (typeof input === "string" && input.endsWith("index.data")) {
+              return origFetch(dataUrl, init);
+            }
+            return origFetch(input, init);
+          };
+
+          const script = document.createElement("script");
+          script.src = "index.js";
+          document.body.appendChild(script);
+        } catch (err) {
+          console.error(err);
+          statusElement.textContent = "Error merging data files.";
+        }
+      })();
+    </script>
+  </body>
+</html>

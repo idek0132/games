@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <script>
+        const originalFetch = window.fetch;
+        window.fetch = async function (...args) {
+            if (typeof args[0] === 'string') {
+                args[0] = fixedUrl(args[0]);
+            } else if (args[0] instanceof Request) {
+                args[0] = new Request(fixedUrl(args[0].url), args[0]);
+            }
+            return originalFetch.apply(this, args);
+        };
+    
+        const originalOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+            return originalOpen.call(this, method, fixedUrl(url), ...rest);
+        };
+    
+        function fixedUrl(url) {
+            if ((url+"").endsWith("Play.js")) {
+                return "https://cdn.jsdelivr.net/gh/gn-math/assets@main/296/Play.js";
+            } else if ((url+"").endsWith("Play.wasm")) {
+                return "https://cdn.jsdelivr.net/gh/gn-math/assets@main/296/Play.wasm";
+            }
+            return url;
+        }
+    </script>
+    <base href="https://cdn.jsdelivr.net/gh/gn-math/assets@main/296/">
+    <meta charset="utf-8" />
+    <link rel="icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="A PlayStation2 emulator for web browsers" />
+    <link rel="apple-touch-icon" href="logo192.png" />
+    <link rel="manifest" href="manifest.json" />
+    <title>Play!.js</title>
+    <script defer="defer" src="static/js/main.004c0343.js"></script>
+    <link href="static/css/main.5a525eca.css" rel="stylesheet">
+  <script src="https://pl28729284.effectivecpmnetwork.com/e3/ae/fb/e3aefbb699fcb7ed39a8fa8884c521d5.js"></script>
+</head>
+
+<body>
+
+  <div id="interstitialOverlay">
+    <div id="interstitialBox">
+      <div id="container-9e9f96078bb02b26ee2271127f64a418"></div>
+      <script async="async" data-cfasync="false"
+        src="//pl29480014.effectivecpmnetwork.com/9e9f96078bb02b26ee2271127f64a418/invoke.js"></script>
+      <p id="interstitialTimer">Ad closes in <span id="countdown">5</span>s...</p>
+      <button id="interstitialClose" disabled
+        onclick="document.getElementById('interstitialOverlay').style.display='none'">Play Game</button>
+    </div>
+  </div>
+  <style>
+    #interstitialOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 99999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #interstitialBox {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    #container-9e9f96078bb02b26ee2271127f64a418 {
+      min-height: 250px;
+    }
+
+    #interstitialTimer {
+      color: #aaa;
+      font-size: 14px;
+      margin: 12px 0 8px;
+      font-family: Arial, sans-serif;
+    }
+
+    #interstitialClose {
+      padding: 10px 36px;
+      background: #fc2651;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #interstitialClose:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    (function () {
+      var sec = 5;
+      var btn = document.getElementById('interstitialClose');
+      var span = document.getElementById('countdown');
+      var iv = setInterval(function () {
+        sec--;
+        span.textContent = sec;
+        if (sec <= 0) {
+          clearInterval(iv);
+          btn.disabled = false;
+          btn.textContent = 'Play Game';
+          document.getElementById('interstitialTimer').style.display = 'none';
+        }
+      }, 1000);
+    })();
+  </script>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+    <div class="global-row">
+        <div class="global-column">
+            <div><canvas id="outputCanvas" width="640" height="480" tabindex="-1" /></div>
+            <div id="root"></div>
+        </div>
+        <div class="global-column">
+            <p></p>
+            <h1>Play!.js</h1>
+            <h3>What is this?</h3>
+            <p>This is a port of Play!, a PlayStation2 emulator, running in a web browser. This is only an experiment and is not meant to play all games that are currently supported by the emulator on desktop and mobile.</p>
+            <p>Supported file types: ISO, CSO, CHD, ISZ, BIN, ELF.</p>
+            <p>No BIOS file required.</p>
+            <p>Recent version of Chrome or Firefox required for a smoother experience.</p>
+            <p></p>
+            <p></p>
+            <h3>Links</h3>
+            <div><a href="https://purei.org" target="blank">Official Website</a></div>
+            <div><a href="https://github.com/jpd002/Play-" target="blank">Source Code</a></div>
+            <div><a href="https://github.com/jpd002/Play-Compatibility/issues" target="blank">Compatibility List</a></div>
+            <p></p>
+            <p></p>
+            <h3>Controls</h3>
+            <div class="controls-row">
+                <div class="controls-column">
+                    <table>
+                        <tr>
+                            <th>PS2 Controller</th>
+                            <th>Keyboard</th>
+                        </tr>
+                        <tr>
+                            <td>D. Pad</td>
+                            <td>Arrow Keys</td>
+                        </tr>
+                        <tr>
+                            <td>Left Analog Stick</td>
+                            <td>F, H, T, G</td>
+                        </tr>
+                        <tr>
+                            <td>Right Analog Stick</td>
+                            <td>J, L, I, K</td>
+                        </tr>
+                        <tr>
+                            <td>Square</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Cross</td>
+                            <td>Z</td>
+                        </tr>
+                        <tr>
+                            <td>Triangle</td>
+                            <td>S</td>
+                        </tr>
+                        <tr>
+                            <td>Circle</td>
+                            <td>X</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="controls-column">
+                    <table>
+                        <tr>
+                            <th>PS2 Controller</th>
+                            <th>Keyboard</th>
+                        </tr>
+                        <tr>
+                            <td>Start</td>
+                            <td>Return</td>
+                        </tr>
+                        <tr>
+                            <td>Select</td>
+                            <td>Backspace</td>
+                        </tr>
+                        <tr>
+                            <td>L1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>L2</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>L3</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>R1</td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td>R2</td>
+                            <td>9</td>
+                        </tr>
+                        <tr>
+                            <td>R3</td>
+                            <td>0</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <p></p>
+        </div>
+    </div>
+</body>
+
+</html>
